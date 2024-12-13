@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>File Uploader</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 20px;
+		}
+		.upload-zone {
+			border: 2px dashed #ccc;
+			border-radius: 10px;
+			padding: 20px;
+			text-align: center;
+			color: #888;
+			cursor: pointer;
+		}
+		.upload-zone.dragover {
+			border-color: #00aaff;
+			color: #00aaff;
+		}
+		#fileList {
+			margin-top: 20px;
+		}
+		.file-info {
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+			margin-bottom: 10px;
+		}
+		.progress {
+			height: 5px;
+			background-color: #00aaff;
+			margin-top: 5px;
+			border-radius: 2px;
+		}
+		.copy-link {
+			cursor: pointer;
+			color: #007bff;
+			text-decoration: underline;
+		}
+		.settings {
+			margin-bottom: 20px;
+		}
+	</style>
+</head>
+<body>
+
+<h1>File Uploader</h1>
+
+<div class="settings">
+	<label for="fileExpiry">File Expiration: </label>
+	<select id="fileExpiry">
+		<option value="never">Never</option>
+		<option value="1h">1 Hour</option>
+		<option value="12h">12 Hours</option>
+		<option value="1d">1 Day</option>
+		<option value="3d">3 Days</option>
+		<option value="7d">7 Days</option>
+	</select>
+</div>
+
+<div class="upload-zone" id="uploadZone">
+	Drag & Drop Files Here or Click to Browse
+	<input type="file" id="fileInput" style="display: none;" multiple>
+</div>
+
+<div id="fileList"></div>
+
+<script>
+	const uploadZone = document.getElementById('uploadZone');
+	const fileInput = document.getElementById('fileInput');
+	const fileList = document.getElementById('fileList');
+	const fileExpiry = document.getElementById('fileExpiry');
+
+	const handleFiles = (files) => {
+		Array.from(files).forEach(file => uploadFile(file));
+	};
+
+	const uploadFile = (file) => {
+		const fileCard = document.createElement('div');
+		fileCard.className = 'file-info';
+
+		const fileName = document.createElement('p');
+		fileName.textContent = `Uploading: ${file.name}`;
+		fileCard.appendChild(fileName);
+
+		const progressBar = document.createElement('div');
+		progressBar.className = 'progress';
+		fileCard.appendChild(progressBar);
+
+		fileList.prepend(fileCard);
+
+		const formData = new FormData();
+		formData.append('file', file);
+		formData.append('expiry', fileExpiry.value);
+
+		const xhr = new XMLHttpRequest();
+		xhr.open('POST', 'upload.php', true);
+
+		xhr.upload.addEventListener('progress', (e) => {
+			if (e.lengthComputable) {
+				const percentComplete = (e.loaded / e.total) * 100;
+				progressBar.style.width = `${percentComplete}%`;
+			}
+		});
+
+		xhr.onload = () => {
+			if (xhr.status === 200) {
+				const response = JSON.parse(xhr.responseText);
+
+				fileName.textContent = `Uploaded: ${response.fileName} (${response.fileSize})`;
+
+				const fileLink = document.createElement('p');
+				const link = document.createElement('a');
+				link.href = response.fileUrl;
+				link.textContent = response.fileUrl;
+				link.target = '_blank';
+
+				const copyLink = document.createElement('span');
+				copyLink.textContent = ' [Copy Link]';
+				copyLink.className = 'copy-link';
+				copyLink.onclick = () => navigator.clipboard.writeText(response.fileUrl);
+
+				fileLink.appendChild(link);
+				fileLink.appendChild(copyLink);
+
+				fileCard.appendChild(fileLink);
+			} else {
+				fileName.textContent = `Error uploading ${file.name}`;
+				progressBar.style.backgroundColor = 'red';
+			}
+		};
+
+		xhr.send(formData);
+	};
+
+	uploadZone.addEventListener('click', () => fileInput.click());
+	uploadZone.addEventListener('dragover', (e) => {
+		e.preventDefault();
+		uploadZone.classList.add('dragover');
+	});
+	uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+	uploadZone.addEventListener('drop', (e) => {
+		e.preventDefault();
+		uploadZone.classList.remove('dragover');
+		handleFiles(e.dataTransfer.files);
+	});
+	fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+</script>
+
+</body>
+</html>
