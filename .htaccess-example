@@ -1,0 +1,17 @@
+# Enable password protection for specific files
+<FilesMatch "^(uploader\.html|upload\.php)$">
+	AuthType Basic
+	AuthName "Restricted Access"
+	AuthUserFile path/to/php-uploader/.htpasswd
+	Require valid-user
+</FilesMatch>
+
+# Allow access to all files in the /uploads/ folder
+<Directory "/uploads">
+	Require all granted
+</Directory>
+
+# Allow access to all images and files in the same folder as uploader.html and upload.php
+<FilesMatch "\.(jpg|jpeg|png|gif|bmp|webp|svg|ico|txt|pdf|css|js|webm|mp4|mp3|mov|txt)$">
+	Require all granted
+</FilesMatch>
