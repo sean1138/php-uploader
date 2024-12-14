@@ -3,12 +3,15 @@ mainly to upload images
 
 will upload files to a /uploads/ subdirectory so create one.
 
+## features:
+1. click to upload
+2. drag and drop files to uplaod
+3. paste from clipboard to upload screenshot
+4. duplicate file checking, if dupe file exists it will give you the link to the existing file
+
 ## issues:
-1. paste from clipboard is fail, 1st attempts to get bot to fix it was all kinds of fail
-2. the bot didn't get all the features i asked for, not surprising
-3. "copy link" link doesn't have the correct URL
-4. file expiration not functional AFAIKRN but an option i'd like to have
-5. security: you will probably want to lock this down via .htaccess
+1. file expiration not functional AFAIKRN but an option i'd like to have, will probably remove tho
+2. security: you will probably want to lock this down via .htaccess ... or i'll have to battle with chatminime some more to make it more secure somehow...
 
 ## chatjippity-4o starting prompt:
 > let's make a file uploader!
