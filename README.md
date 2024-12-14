@@ -12,6 +12,7 @@ will upload files to a /uploads/ subdirectory so create one.
 ## issues:
 1. file expiration not functional AFAIKRN but an option i'd like to have, will probably remove tho
 2. security: you will probably want to lock this down via .htaccess ... or i'll have to battle with chatminime some more to make it more secure somehow...
+3. want to make a page that will show all the uploaded files, that's why log.json gets created...
 
 ## chatjippity-4o starting prompt:
 > let's make a file uploader!
