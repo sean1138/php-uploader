@@ -17,6 +17,15 @@
 			color: #888;
 			cursor: pointer;
 		}
+		.upload-zone:focus-visible{
+			border-color:orange;
+			outline:none;
+		}
+		.upload-zone.highlight {
+				background-color: #e0ffe0;
+				border-color: #00a000;
+				transition: background-color 0.5s, border-color 0.5s;
+		}
 		.upload-zone.dragover {
 			border-color: #00aaff;
 			color: #00aaff;
@@ -24,7 +33,7 @@
 		#fileList {
 			margin-top: 20px;
 		}
-		.file-info {
+		.fileCard {
 			padding: 10px;
 			border: 1px solid #ddd;
 			border-radius: 5px;
@@ -62,8 +71,8 @@
 	</select>
 </div>
 
-<div class="upload-zone" id="uploadZone">
-	Drag & Drop Files Here or Click to Browse
+<div class="upload-zone" id="uploadZone" tabindex="0">
+	CTRL+V to paste screenshot, drag & drop files here, or click to upload a file.
 	<input type="file" id="fileInput" style="display: none;" multiple>
 </div>
 
@@ -79,76 +88,183 @@
 		Array.from(files).forEach(file => uploadFile(file));
 	};
 
-	const uploadFile = (file) => {
-		const fileCard = document.createElement('div');
-		fileCard.className = 'file-info';
+	const uploadFile = (file, source) => {
+			const fileCard = document.createElement('div');
+			fileCard.className = 'fileCard';
 
-		const fileName = document.createElement('p');
-		fileName.textContent = `Uploading: ${file.name}`;
-		fileCard.appendChild(fileName);
+			const fileName = document.createElement('p');
+			fileName.textContent = `Uploading: ${file.name || 'Clipboard Image'}`;
+			fileCard.appendChild(fileName);
 
-		const progressBar = document.createElement('div');
-		progressBar.className = 'progress';
-		fileCard.appendChild(progressBar);
+			const progressBar = document.createElement('div');
+			progressBar.className = 'progress';
+			fileCard.appendChild(progressBar);
 
-		fileList.prepend(fileCard);
+			fileList.prepend(fileCard);
 
-		const formData = new FormData();
-		formData.append('file', file);
-		formData.append('expiry', fileExpiry.value);
+			const formData = new FormData();
+			formData.append('expiry', fileExpiry.value);
 
-		const xhr = new XMLHttpRequest();
-		xhr.open('POST', 'upload.php', true);
-
-		xhr.upload.addEventListener('progress', (e) => {
-			if (e.lengthComputable) {
-				const percentComplete = (e.loaded / e.total) * 100;
-				progressBar.style.width = `${percentComplete}%`;
-			}
-		});
-
-		xhr.onload = () => {
-			if (xhr.status === 200) {
-				const response = JSON.parse(xhr.responseText);
-
-				fileName.textContent = `Uploaded: ${response.fileName} (${response.fileSize})`;
-
-				const fileLink = document.createElement('p');
-				const link = document.createElement('a');
-				link.href = response.fileUrl;
-				link.textContent = response.fileUrl;
-				link.target = '_blank';
-
-				const copyLink = document.createElement('span');
-				copyLink.textContent = ' [Copy Link]';
-				copyLink.className = 'copy-link';
-				copyLink.onclick = () => navigator.clipboard.writeText(response.fileUrl);
-
-				fileLink.appendChild(link);
-				fileLink.appendChild(copyLink);
-
-				fileCard.appendChild(fileLink);
+			if (source === 'clipboard') {
+					// Handle clipboard image upload
+					const reader = new FileReader();
+					reader.onload = (e) => {
+							formData.append('clipboardData', e.target.result); // Send as base64
+							sendRequest(formData, fileCard, fileName, progressBar);
+					};
+					reader.readAsDataURL(file);
 			} else {
-				fileName.textContent = `Error uploading ${file.name}`;
-				progressBar.style.backgroundColor = 'red';
+					// Handle regular file upload
+					formData.append('file', file);
+					sendRequest(formData, fileCard, fileName, progressBar);
 			}
-		};
-
-		xhr.send(formData);
 	};
 
-	uploadZone.addEventListener('click', () => fileInput.click());
-	uploadZone.addEventListener('dragover', (e) => {
-		e.preventDefault();
-		uploadZone.classList.add('dragover');
+
+	const sendRequest = (formData, fileCard, fileName, progressBar) => {
+			const xhr = new XMLHttpRequest();
+			xhr.open('POST', 'upload.php', true);
+
+			xhr.upload.addEventListener('progress', (e) => {
+					if (e.lengthComputable) {
+							const percentComplete = (e.loaded / e.total) * 100;
+							progressBar.style.width = `${percentComplete}%`;
+					}
+			});
+
+			xhr.onload = () => {
+			    if (xhr.status === 200) {
+			        const response = JSON.parse(xhr.responseText);
+
+			        fileName.textContent = `Uploaded: ${response.fileName} (${response.fileSize})`;
+
+			        const fileLink = document.createElement('p');
+			        const link = document.createElement('a');
+
+			        // Construct the full URL dynamically
+			        const fullUrl = `${window.location.origin}${window.location.pathname.replace(/\/[^/]*$/, '/')}${response.fileUrl}`;
+			        link.href = fullUrl;
+			        link.textContent = response.fileName;
+			        link.target = '_blank';
+
+			        const copyLink = document.createElement('span');
+			        copyLink.textContent = ' [Copy Link]';
+			        copyLink.className = 'copy-link';
+			        copyLink.onclick = () => navigator.clipboard.writeText(fullUrl);
+
+			        fileLink.appendChild(link);
+			        fileLink.appendChild(copyLink);
+
+			        fileCard.appendChild(fileLink);
+			    } else {
+			        const response = JSON.parse(xhr.responseText);
+
+			        fileName.textContent = `Error: ${response.error}`;
+			        progressBar.style.backgroundColor = 'red';
+
+			        if (response.existingFileUrl) {
+			            const fileLink = document.createElement('p');
+			            const link = document.createElement('a');
+
+			            // Construct the full URL dynamically for the duplicate file
+			            const fullUrl = `${window.location.origin}${window.location.pathname.replace(/\/[^/]*$/, '/')}${response.existingFileUrl}`;
+			            link.href = fullUrl;
+			            link.textContent = response.existingFileUrl;
+			            link.target = '_blank';
+
+			            const copyLink = document.createElement('span');
+			            copyLink.textContent = ' [Copy Link]';
+			            copyLink.className = 'copy-link';
+			            copyLink.onclick = () => navigator.clipboard.writeText(fullUrl);
+
+			            fileLink.appendChild(link);
+			            fileLink.appendChild(copyLink);
+
+			            fileCard.appendChild(fileLink);
+			        }
+			    }
+			};
+
+
+
+			xhr.onerror = () => {
+					fileName.textContent = 'Error uploading file.';
+					progressBar.style.backgroundColor = 'red';
+			};
+
+			xhr.send(formData);
+	};
+
+	// paste from clipboard
+	document.addEventListener('DOMContentLoaded', () => {
+			const uploadZone = document.getElementById('uploadZone');
+			const fileList = document.getElementById('fileList');
+			const fileExpiry = document.getElementById('fileExpiry');
+
+			// Listen for paste events globally
+			document.addEventListener('paste', async (event) => {
+					const items = event.clipboardData.items;
+					let foundImage = false;
+
+					for (const item of items) {
+							if (item.type.startsWith('image/')) {
+									const blob = item.getAsFile();
+									console.log("Clipboard image detected:", blob); // Debugging log
+									if (blob) {
+											foundImage = true;
+											uploadFile(blob, 'clipboard');
+									}
+							}
+					}
+
+					if (foundImage) {
+							uploadZone.classList.add('highlight');
+							setTimeout(() => uploadZone.classList.remove('highlight'), 1000);
+					}
+			});
+
+
+			// Drag-and-drop and file input remain unchanged
+			uploadZone.addEventListener('dragover', (e) => {
+					e.preventDefault();
+					uploadZone.classList.add('dragover');
+			});
+
+			uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+			uploadZone.addEventListener('drop', (e) => {
+					e.preventDefault();
+					uploadZone.classList.remove('dragover');
+					handleFiles(e.dataTransfer.files);
+			});
+
+			const fileInput = document.getElementById('fileInput');
+			uploadZone.addEventListener('click', () => fileInput.click());
+			fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+			const handleFiles = (files) => {
+					Array.from(files).forEach(file => uploadFile(file, 'file'));
+			};
 	});
-	uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
-	uploadZone.addEventListener('drop', (e) => {
-		e.preventDefault();
-		uploadZone.classList.remove('dragover');
-		handleFiles(e.dataTransfer.files);
-	});
-	fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+	// display file dimensions
+	function displayFileInfo(fileInfo) {
+			const fileCard = document.createElement('div');
+			fileCard.className = 'fileCard';
+
+			fileCard.innerHTML = `
+					<p><strong>Filename:</strong> ${fileInfo.fileName}</p>
+					<p><strong>File Size:</strong> ${fileInfo.fileSize}</p>
+					<p><strong>Dimensions:</strong> ${fileInfo.fileDimensions || 'N/A'}</p>
+					<p><strong>URL:</strong> <a href="${fileInfo.fileUrl}" target="_blank">${fileInfo.fileUrl}</a></p>
+					<p class="copy-link" onclick="navigator.clipboard.writeText('${fileInfo.fileUrl}')">Copy Link</p>
+			`;
+
+			fileList.prepend(fileCard);
+	}
+
+
+
+
 </script>
 
 </body>
