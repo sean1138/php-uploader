@@ -8,11 +8,11 @@ will upload files to a /uploads/ subdirectory so create one.
 2. drag and drop files to uplaod
 3. paste from clipboard to upload screenshot
 4. duplicate file checking, if dupe file exists it will give you the link to the existing file
+5. uploader.php requires login with username and password. remove '-example' from the `uploader-creds-example.php` filename and set the username and password in it.
 
 ## issues:
 1. file expiration not functional AFAIKRN but an option i'd like to have, will probably remove tho
-2. security: you will probably want to lock this down via .htaccess ... or i'll have to battle with chatminime some more to make it more secure somehow...
-3. want to make a page that will show all the uploaded files, that's why log.json gets created...
+2. want to make a page that will show all the uploaded files, that's why log.json gets created...
 
 ## chatjippity-4o starting prompt:
 > let's make a file uploader!
