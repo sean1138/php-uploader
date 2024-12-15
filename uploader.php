@@ -99,6 +99,11 @@ require_once 'uploader-validate-multi-user.php';
 			background: var(--color1);
 			color: var(--white);
 		}
+		main{
+			display: flex;
+			flex-direction: column;
+			gap: 2rem;
+		}
 		.upload-zone {
 			border: 2px dashed var(--black);
 			border-radius: var(--borderRad);
@@ -127,14 +132,15 @@ require_once 'uploader-validate-multi-user.php';
 			background-color: var(--color2light);
 			border-color: var(--color2);
 		}
-		#fileList {
-			margin-top: 2rem;
+		.fileCards{
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
 		}
 		.fileCard {
-			padding: 1rem;
+			padding: 0 1rem;
 			border: 1px solid var(--grey);
 			border-radius: var(--borderRad);
-			margin-bottom: 1rem;
 		}
 		.fileCard span{
 			margin-left:1em;
@@ -210,7 +216,7 @@ require_once 'uploader-validate-multi-user.php';
 			CTRL+V to paste screenshot, drag & drop files here, or click to upload a file.
 			<input type="file" id="fileInput" style="display: none;" multiple>
 		</div>
-		<div id="fileList"></div>
+		<div class="fileCards" id="fileList"></div>
 	</main>
 	<footer>
 		<p style="margin:0;text-align:center;">VSXD 2024.12.15</p>
