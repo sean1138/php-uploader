@@ -110,17 +110,14 @@ require_once 'uploader-validate-multi-user.php';
 			padding: 2rem;
 			text-align: center;
 			color: var(--black);
+			font-size: 1.25rem;
 			cursor: pointer;
 			transition: all 0.5s;
 		}
-		.upload-zone:hover{
+		.upload-zone:hover, .upload-zone:focus-visible{
 			border-color: var(--white);
 			color: var(--white);
 			background: var(--black);
-		}
-		.upload-zone:focus-visible{
-			background-color: var(--color3light);
-			border-color: var(--color3);
 			outline:none;
 		}
 		.upload-zone.highlight {
@@ -212,10 +209,10 @@ require_once 'uploader-validate-multi-user.php';
 				<option value="7d">7 Days</option>
 			</select>
 		</div>
-		<div class="upload-zone" id="uploadZone" tabindex="0">
+		<button class="upload-zone" id="uploadZone" tabindex="0">
 			CTRL+V to paste screenshot, drag & drop files here, or click to upload a file.
 			<input type="file" id="fileInput" style="display: none;" multiple>
-		</div>
+		</button>
 		<div class="fileCards" id="fileList"></div>
 	</main>
 	<footer>
@@ -313,6 +310,7 @@ require_once 'uploader-validate-multi-user.php';
 
 					const fileEmbed = document.createElement('img');
 					fileEmbed.src = fullUrl;
+					fileEmbed.alt = response.fileName;
 					fileEmbed.className = 'preview';
 
 					fileLink.appendChild(link);
@@ -359,6 +357,7 @@ require_once 'uploader-validate-multi-user.php';
 
 						const fileEmbed = document.createElement('img');
 						fileEmbed.src = fullUrl;
+						fileEmbed.alt = fileName;
 						fileEmbed.className = 'preview';
 
 						fileLink.appendChild(link);
