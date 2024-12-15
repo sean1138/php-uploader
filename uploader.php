@@ -348,11 +348,13 @@ if (isset($_GET['logout'])) {
 						fileLink.className = 'results';
 						const link = document.createElement('a');
 
+						// Extract the file name from the existingFileUrl
+						const fileName = response.existingFileUrl.split('/').pop(); // Get the last part of the URL (the file name)
+
 						// Construct the full URL dynamically for the duplicate file
 						const fullUrl = `${window.location.origin}${window.location.pathname.replace(/\/[^/]*$/, '/')}${response.existingFileUrl}`;
 						link.href = fullUrl;
-						link.textContent = response.existingFileUrl;
-						// link.textContent = response.fileName;
+						link.textContent = fileName; // Display just the file name
 						link.target = '_blank';
 
 						const copyLink = document.createElement('span');
