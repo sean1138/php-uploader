@@ -33,12 +33,41 @@ if (isset($_GET['logout'])) {
 	<style>
 		body {
 			font-family: Arial, sans-serif;
-			margin: 20px;
+			margin: 0;
+			/* remove empty space below footer on short content pages 1/2 */
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+			/* blue */
+			--color1: hsl(200 100% 32%);
+			--color1light: hsl(200 100% 94%);
+			/* green */
+			--color2: hsl(120 100% 32%);
+			--color2light: hsl(120 100% 94%);
+			/* orange */
+			--color3: hsl(30 100% 32%);
+			--color3light: hsl(30 100% 94%);
+			--white: hsl(0 0% 94%);
+			--black: hsl(0 0% 32%);
+			--grey: hsl(30 0% 50%);
+			background: var(--white);
+			color: var(--black);
+			--borderRad: .25rem;
+		}
+		header,
+		main,
+		footer {
+			padding:1rem;
+		}
+		footer {
+			/* remove empty space below footer on short content pages 2/2 */
+			margin-top: auto;
 		}
 		dialog {
+			place-self: anchor-center;
 			border: none;
-			border-radius: 10px;
-			padding: 20px;
+			border-radius: var(--borderRad);
+			padding: 2rem;
 			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 			max-width: 300px;
 			text-align: center;
@@ -49,22 +78,25 @@ if (isset($_GET['logout'])) {
 			gap: 10px;
 		}
 		dialog form input {
-			padding: 10px;
+			padding: .5em;
 			font-size: 1rem;
-			border: 1px solid #ccc;
-			border-radius: 5px;
+			border: 1px solid var(--grey);
+			border-radius: var(--borderRad);
 		}
 		dialog form button {
-			padding: 10px;
+			padding: .5em 1em;
 			font-size: 1rem;
-			background-color: #007bff;
-			color: white;
-			border: none;
-			border-radius: 5px;
+			background-color: var(--color1light);
+			border:1px solid var(--color1);
+			border-radius: var(--borderRad);
+			text-decoration: none;
+			color: var(--color1);
+			transition: all 0.5s;
 			cursor: pointer;
 		}
 		dialog form button:hover {
-			background-color: #0056b3;
+			background-color: var(--color1);
+			color: var(--white);
 		}
 		header {
 			display: flex;
@@ -72,11 +104,17 @@ if (isset($_GET['logout'])) {
 			align-items: center;
 		}
 		.logout-btn {
-			color: white;
-			background-color: red;
-			padding: 10px 15px;
+			padding: .5em 1em;
+			background-color: var(--color1light);
+			border:1px solid var(--color1);
+			border-radius: var(--borderRad);
 			text-decoration: none;
-			border-radius: 5px;
+			color: var(--color1);
+			transition: all 0.5s;
+		}
+		.logout-btn:hover{
+			background: var(--color1);
+			color: var(--white);
 		}
 		header{
 			display: flex;
@@ -84,34 +122,40 @@ if (isset($_GET['logout'])) {
 			align-items: center;
 		}
 		.upload-zone {
-			border: 2px dashed #ccc;
-			border-radius: 10px;
-			padding: 20px;
+			border: 2px dashed var(--black);
+			border-radius: var(--borderRad);
+			padding: 2rem;
 			text-align: center;
-			color: #888;
+			color: var(--black);
 			cursor: pointer;
+			transition: all 0.5s;
+		}
+		.upload-zone:hover{
+			border-color: var(--white);
+			color: var(--white);
+			background: var(--black);
 		}
 		.upload-zone:focus-visible{
-			border-color:orange;
+			background-color: var(--color3light);
+			border-color: var(--color3);
 			outline:none;
 		}
 		.upload-zone.highlight {
-			background-color: #e0ffe0;
-			border-color: #00a000;
-			transition: background-color 0.5s, border-color 0.5s;
+			background-color: var(--color3light);
+			border-color: var(--color3);
 		}
 		.upload-zone.dragover {
-			border-color: #00aaff;
-			color: #00aaff;
+			background-color: var(--color2light);
+			border-color: var(--color2);
 		}
 		#fileList {
 			margin-top: 20px;
 		}
 		.fileCard {
 			padding: 10px;
-			border: 1px solid #ddd;
-			border-radius: 5px;
-			margin-bottom: 10px;
+			border: 1px solid var(--grey);
+			border-radius: var(--borderRad);
+			margin-bottom: 1rem;
 		}
 		.fileCard span{
 			margin-left:1em;
@@ -166,22 +210,28 @@ if (isset($_GET['logout'])) {
 		<h1>File Uploader</h1>
 		<a href="?logout" class="logout-btn">Logout</a>
 	</header>
-	<div class="settings">
-		<label for="fileExpiry">File Expiration: </label>
-		<select id="fileExpiry">
-			<option value="never">Never</option>
-			<option value="1h">1 Hour</option>
-			<option value="12h">12 Hours</option>
-			<option value="1d">1 Day</option>
-			<option value="3d">3 Days</option>
-			<option value="7d">7 Days</option>
-		</select>
-	</div>
-	<div class="upload-zone" id="uploadZone" tabindex="0">
-		CTRL+V to paste screenshot, drag & drop files here, or click to upload a file.
-		<input type="file" id="fileInput" style="display: none;" multiple>
-	</div>
-	<div id="fileList"></div>
+	<main>
+		<!-- this functionality would require cron job and further extensive testing but don't want to strip out everything the relies on it -->
+		<div class="settings d-none">
+			<label for="fileExpiry">File Expiration: </label>
+			<select id="fileExpiry">
+				<option value="never">Never</option>
+				<option value="1h">1 Hour</option>
+				<option value="12h">12 Hours</option>
+				<option value="1d">1 Day</option>
+				<option value="3d">3 Days</option>
+				<option value="7d">7 Days</option>
+			</select>
+		</div>
+		<div class="upload-zone" id="uploadZone" tabindex="0">
+			CTRL+V to paste screenshot, drag & drop files here, or click to upload a file.
+			<input type="file" id="fileInput" style="display: none;" multiple>
+		</div>
+		<div id="fileList"></div>
+	</main>
+	<footer>
+		<p style="margin:0;text-align:center;">VSXD 2024.12.15</p>
+	</footer>
 	<script>
 		const uploadZone = document.getElementById('uploadZone');
 		const fileInput = document.getElementById('fileInput');
@@ -233,6 +283,7 @@ if (isset($_GET['logout'])) {
 				if (e.lengthComputable) {
 					const percentComplete = (e.loaded / e.total) * 100;
 					progressBar.style.width = `${percentComplete}%`;
+					uploadZone.classList.add('highlight');
 				}
 			});
 
@@ -246,6 +297,7 @@ if (isset($_GET['logout'])) {
 
 					// remove progress bar
 					fileCard.removeChild(progressBar);
+					uploadZone.classList.remove('highlight');
 
 					const fileLink = document.createElement('p');
 					fileLink.className = 'results';
@@ -342,7 +394,7 @@ if (isset($_GET['logout'])) {
 
 				if (foundImage) {
 					uploadZone.classList.add('highlight');
-					setTimeout(() => uploadZone.classList.remove('highlight'), 1000);
+					// setTimeout(() => uploadZone.classList.remove('highlight'), 1000);
 				}
 			});
 

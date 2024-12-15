@@ -3,6 +3,10 @@ mainly to upload images
 
 will upload files to a /uploads/ subdirectory so create one.
 
+## demonstration video
+[![video thumbnail](phpfu-video-thumb.png)](https://youtu.be/bZAqCzjDPu4
+ "php file uploader demonstration")
+
 ## features:
 1. click to upload
 2. drag and drop files to uplaod
