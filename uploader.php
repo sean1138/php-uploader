@@ -1,28 +1,6 @@
 <?php
-session_start();
-require_once 'uploader-creds.php'; // Adjust the path if needed
-
-// Check if the user is already authenticated
-if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
-		// Handle login form submission
-		if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username']) && isset($_POST['password'])) {
-				if ($_POST['username'] === UPLOAD_USERNAME && $_POST['password'] === UPLOAD_PASSWORD) {
-						$_SESSION['authenticated'] = true;
-						header('Location: uploader.php'); // Reload the page after successful login
-						exit;
-				} else {
-						$error = "Invalid username or password.";
-				}
-		}
-}
-
-// Handle logout
-if (isset($_GET['logout'])) {
-		session_unset();
-		session_destroy();
-		header('Location: uploader.php'); // Reload the page after logout
-		exit;
-}
+// use uploader-validate-multi-user.php or uploader-validate-single-user.php per your requirements
+require_once 'uploader-validate-multi-user.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -100,8 +78,13 @@ if (isset($_GET['logout'])) {
 		}
 		header {
 			display: flex;
-			justify-content: space-between;
 			align-items: center;
+			gap: 2rem;
+		}
+		.uname{
+			display: flex;
+			flex-grow: 1;
+			justify-content: end;
 		}
 		.logout-btn {
 			padding: .5em 1em;
@@ -115,11 +98,6 @@ if (isset($_GET['logout'])) {
 		.logout-btn:hover{
 			background: var(--color1);
 			color: var(--white);
-		}
-		header{
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
 		}
 		.upload-zone {
 			border: 2px dashed var(--black);
@@ -210,6 +188,9 @@ if (isset($_GET['logout'])) {
 	<!-- File Uploader -->
 	<header>
 		<h1>File Uploader</h1>
+		<?php if (isset($_SESSION['username'])): ?>
+		    <span class="uname">Logged in as: <strong><?= htmlspecialchars($_SESSION['username']) ?></strong></span>
+		<?php endif; ?>
 		<a href="?logout" class="logout-btn">Logout</a>
 	</header>
 	<main>
