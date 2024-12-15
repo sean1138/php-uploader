@@ -31,7 +31,7 @@ function debugLog($message) {
 // Configuration
 $uploadDir = __DIR__ . '/uploads/'; // Ensure this directory is writable
 $maxFileSize = 200 * 1024 * 1024; // 200 MB
-$allowedFileTypes = ['image/jpeg', 'image/png', 'image/gif', 'text/plain', 'application/pdf', 'video/mp4', 'video/quicktime', 'video/webm'];
+$allowedFileTypes = ['image/jpeg', 'image/png', 'image/gif', 'text/plain', 'application/pdf', 'video/mp4', 'video/quicktime', 'video/webm', 'video/mpeg', 'audio/mpeg'];
 
 // paste from clipboard
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
