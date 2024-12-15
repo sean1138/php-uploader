@@ -49,10 +49,21 @@
 			margin-top: 5px;
 			border-radius: 2px;
 		}
+		.results{
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
 		.copy-link {
 			cursor: pointer;
 			color: #007bff;
 			text-decoration: underline;
+		}
+		.preview{
+			margin-left:1em;
+			width: auto;
+			height: auto;
+			max-height: 80px;
 		}
 		.settings {
 			margin-bottom: 20px;
@@ -103,6 +114,7 @@
 
 			const fileName = document.createElement('p');
 			fileName.textContent = `Uploading: ${file.name || 'Clipboard Image'}`;
+			fileName.className = 'uploading';
 			fileCard.appendChild(fileName);
 
 			const progressBar = document.createElement('div');
@@ -146,10 +158,13 @@
 
 							// fileName.textContent = `Uploaded: ${response.fileName} (${response.fileSize})`;
 							// make this P disappear after upload finshes
-							fileName.textContent = ``;
-							fileName.className = 'd-none';
+							fileCard.removeChild(fileName);
+
+							// remove progress bar
+							fileCard.removeChild(progressBar);
 
 							const fileLink = document.createElement('p');
+							fileLink.className = 'results';
 							const link = document.createElement('a');
 
 							// Construct the full URL dynamically
@@ -171,10 +186,15 @@
 							fileDims.textContent = `File Dimensions: ${response.fileDimensions}`;
 							fileDims.className = 'file-dims';
 
+							const fileEmbed = document.createElement('img');
+							fileEmbed.src = fullUrl;
+							fileEmbed.className = 'preview';
+
 							fileLink.appendChild(link);
 							fileLink.appendChild(copyLink);
 							fileLink.appendChild(fileSize);
 							fileLink.appendChild(fileDims);
+							fileLink.appendChild(fileEmbed);
 
 							fileCard.appendChild(fileLink);
 					} else {
