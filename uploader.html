@@ -49,6 +49,7 @@
 			cursor: pointer;
 			color: #007bff;
 			text-decoration: underline;
+			margin-left:1em;
 		}
 		.settings {
 			margin-bottom: 20px;
@@ -56,6 +57,9 @@
 	</style>
 </head>
 <body>
+
+	<!-- Remove the iframe if you don't want password protection -->
+	<iframe src="phpprotection.php" id="phpprotection" style="position: absolute; left:0; top: 0; width: 100vw; height: 100vh; background: white; z-index: 10000" frameborder="0" scrolling="no"></iframe>
 
 <h1>File Uploader</h1>
 
@@ -148,7 +152,7 @@
 			        link.target = '_blank';
 
 			        const copyLink = document.createElement('span');
-			        copyLink.textContent = ' [Copy Link]';
+			        copyLink.textContent = '[Copy Link]';
 			        copyLink.className = 'copy-link';
 			        copyLink.onclick = () => navigator.clipboard.writeText(fullUrl);
 
@@ -173,7 +177,7 @@
 			            link.target = '_blank';
 
 			            const copyLink = document.createElement('span');
-			            copyLink.textContent = ' [Copy Link]';
+			            copyLink.textContent = '[Copy Link]';
 			            copyLink.className = 'copy-link';
 			            copyLink.onclick = () => navigator.clipboard.writeText(fullUrl);
 

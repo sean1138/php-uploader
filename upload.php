@@ -1,6 +1,7 @@
 <?php
 // upload.php
 
+// debug
 function debugLog($message) {
 	file_put_contents(__DIR__ . '/debug.log', date('Y-m-d H:i:s') . " - " . $message . PHP_EOL, FILE_APPEND);
 }
