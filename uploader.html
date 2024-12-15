@@ -40,6 +40,9 @@
 			border-radius: 5px;
 			margin-bottom: 10px;
 		}
+		.fileCard span{
+			margin-left:1em;
+		}
 		.progress {
 			height: 5px;
 			background-color: #00aaff;
@@ -50,16 +53,18 @@
 			cursor: pointer;
 			color: #007bff;
 			text-decoration: underline;
-			margin-left:1em;
 		}
 		.settings {
 			margin-bottom: 20px;
+		}
+		.d-none{
+			display:none;
 		}
 	</style>
 </head>
 <body>
 	<!-- Remove the iframe if you don't want password protection -->
-	<iframe src="phpprotection.php" id="phpprotection" style="position: absolute; left:0; top: 0; width: 100vw; height: 100vh; background: white; z-index: 10000" frameborder="0" scrolling="no"></iframe>
+	<!-- <iframe src="phpprotection.php" id="phpprotection" style="position: absolute; left:0; top: 0; width: 100vw; height: 100vh; background: white; z-index: 10000" frameborder="0" scrolling="no"></iframe> -->
 
 	<h1>File Uploader</h1>
 
@@ -139,7 +144,10 @@
 					if (xhr.status === 200) {
 							const response = JSON.parse(xhr.responseText);
 
-							fileName.textContent = `Uploaded: ${response.fileName} (${response.fileSize})`;
+							// fileName.textContent = `Uploaded: ${response.fileName} (${response.fileSize})`;
+							// make this P disappear after upload finshes
+							fileName.textContent = ``;
+							fileName.className = 'd-none';
 
 							const fileLink = document.createElement('p');
 							const link = document.createElement('a');
@@ -155,8 +163,18 @@
 							copyLink.className = 'copy-link';
 							copyLink.onclick = () => navigator.clipboard.writeText(fullUrl);
 
+							const fileSize = document.createElement('span');
+							fileSize.textContent = `File Size: ${response.fileSize}`;
+							fileSize.className = 'file-size';
+
+							const fileDims = document.createElement('span');
+							fileDims.textContent = `File Dimensions: ${response.fileDimensions}`;
+							fileDims.className = 'file-dims';
+
 							fileLink.appendChild(link);
 							fileLink.appendChild(copyLink);
+							fileLink.appendChild(fileSize);
+							fileLink.appendChild(fileDims);
 
 							fileCard.appendChild(fileLink);
 					} else {
