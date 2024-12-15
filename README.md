@@ -8,7 +8,7 @@ will upload files to a /uploads/ subdirectory so create one.
 2. drag and drop files to uplaod
 3. paste from clipboard to upload screenshot
 4. duplicate file checking, if dupe file exists it will give you the link to the existing file
-5. uploader.php requires login with username and password. remove '-example' from the `uploader-creds-example.php` filename and set the username and password in it.
+5. uploader.php requires login with username and password. remove '-example' from the `uploader-creds-example.php` filename and set the username and password in it.  for better security rename this file to a random string, put it in a different folder, and modify `upload.php` and `uploader.php` accordingly.
 
 ## issues:
 1. file expiration not functional AFAIKRN but an option i'd like to have, will probably remove tho
