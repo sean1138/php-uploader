@@ -1,6 +1,28 @@
 <?php
 // upload.php
 
+session_start();
+
+// Include the credentials file
+require_once 'uploader-creds.php'; // Adjust the path if stored outside the web root
+
+// Check if the user is already authenticated
+if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
+    // Prompt for credentials
+    if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
+        $_SERVER['PHP_AUTH_USER'] !== UPLOAD_USERNAME || $_SERVER['PHP_AUTH_PW'] !== UPLOAD_PASSWORD) {
+        header('WWW-Authenticate: Basic realm="Uploader Access"');
+        header('HTTP/1.0 401 Unauthorized');
+        echo 'Unauthorized: You need to provide valid credentials to access this page.';
+        exit;
+    }
+
+    // If valid credentials are provided, authenticate the user
+    $_SESSION['authenticated'] = true;
+}
+
+// Continue with the rest of your upload logic...
+
 // debug
 function debugLog($message) {
 	file_put_contents(__DIR__ . '/debug.log', date('Y-m-d H:i:s') . " - " . $message . PHP_EOL, FILE_APPEND);
