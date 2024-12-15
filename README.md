@@ -12,7 +12,7 @@ will upload files to a /uploads/ subdirectory so create one.
 2. drag and drop files to uplaod
 3. paste from clipboard to upload screenshot
 4. duplicate file checking: if dupe file exists it will give you the link to the existing file
-5. uploader.php requires login with username and password. remove '-example' from the `uploader-creds-example.php` filename and set the username and password in it.  for better security rename this file to a random string, put it in a different folder, and modify `upload.php` and `uploader.php` accordingly.
+5. support for a single user login OR multi-user!
 6. mime type whitelisting [ref1](https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types) [ref2]((https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types))
 
 ## issues:
