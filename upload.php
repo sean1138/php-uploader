@@ -6,7 +6,6 @@ function debugLog($message) {
 	file_put_contents(__DIR__ . '/debug.log', date('Y-m-d H:i:s') . " - " . $message . PHP_EOL, FILE_APPEND);
 }
 
-
 // Configuration
 $uploadDir = __DIR__ . '/uploads/'; // Ensure this directory is writable
 $maxFileSize = 200 * 1024 * 1024; // 200 MB
@@ -87,10 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 	}
 
-
-
-
-
 	// Handle regular file uploads
 	if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
 		http_response_code(400);
@@ -155,7 +150,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	    }
 	}
 
-
 	if (!move_uploaded_file($file['tmp_name'], $destination)) {
 		http_response_code(500);
 		echo json_encode(['error' => 'Failed to save uploaded file.']);
@@ -201,5 +195,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		'fileUrl' => 'uploads/' . $uniqueName,
 	]);
 }
-
 ?>
