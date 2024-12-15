@@ -57,7 +57,7 @@ if (isset($_GET['logout'])) {
 		header,
 		main,
 		footer {
-			padding:1rem;
+			padding: 1rem;
 		}
 		footer {
 			/* remove empty space below footer on short content pages 2/2 */
@@ -143,16 +143,17 @@ if (isset($_GET['logout'])) {
 		.upload-zone.highlight {
 			background-color: var(--color3light);
 			border-color: var(--color3);
+			color: var(--color3);
 		}
 		.upload-zone.dragover {
 			background-color: var(--color2light);
 			border-color: var(--color2);
 		}
 		#fileList {
-			margin-top: 20px;
+			margin-top: 2rem;
 		}
 		.fileCard {
-			padding: 10px;
+			padding: 1rem;
 			border: 1px solid var(--grey);
 			border-radius: var(--borderRad);
 			margin-bottom: 1rem;
@@ -161,7 +162,7 @@ if (isset($_GET['logout'])) {
 			margin-left:1em;
 		}
 		.progress {
-			height: 5px;
+			height: .25rem;
 			background-color: #00aaff;
 			margin-top: 5px;
 			border-radius: 2px;
@@ -181,9 +182,10 @@ if (isset($_GET['logout'])) {
 			width: auto;
 			height: auto;
 			max-height: 80px;
+			border: 1px solid var(--grey);
 		}
 		.settings {
-			margin-bottom: 20px;
+			margin-bottom: 2rem;
 		}
 		.d-none{
 			display:none;
@@ -334,19 +336,23 @@ if (isset($_GET['logout'])) {
 
 					fileCard.appendChild(fileLink);
 				} else {
+					// duplicate file detected
 					const response = JSON.parse(xhr.responseText);
 
 					fileName.textContent = `Error: ${response.error}`;
 					progressBar.style.backgroundColor = 'red';
 
 					if (response.existingFileUrl) {
+						uploadZone.classList.remove('highlight');
 						const fileLink = document.createElement('p');
+						fileLink.className = 'results';
 						const link = document.createElement('a');
 
 						// Construct the full URL dynamically for the duplicate file
 						const fullUrl = `${window.location.origin}${window.location.pathname.replace(/\/[^/]*$/, '/')}${response.existingFileUrl}`;
 						link.href = fullUrl;
 						link.textContent = response.existingFileUrl;
+						// link.textContent = response.fileName;
 						link.target = '_blank';
 
 						const copyLink = document.createElement('span');
@@ -354,8 +360,23 @@ if (isset($_GET['logout'])) {
 						copyLink.className = 'copy-link';
 						copyLink.onclick = () => navigator.clipboard.writeText(fullUrl);
 
+						const fileSize = document.createElement('span');
+						fileSize.textContent = `File Size: ${response.fileSize}`;
+						fileSize.className = 'file-size';
+
+						const fileDims = document.createElement('span');
+						fileDims.textContent = `File Dimensions: ${response.fileDimensions}`;
+						fileDims.className = 'file-dims';
+
+						const fileEmbed = document.createElement('img');
+						fileEmbed.src = fullUrl;
+						fileEmbed.className = 'preview';
+
 						fileLink.appendChild(link);
 						fileLink.appendChild(copyLink);
+						fileLink.appendChild(fileSize);
+						fileLink.appendChild(fileDims);
+						fileLink.appendChild(fileEmbed);
 
 						fileCard.appendChild(fileLink);
 					}

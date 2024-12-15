@@ -8,17 +8,17 @@ require_once 'uploader-creds.php'; // Adjust the path if stored outside the web 
 
 // Check if the user is already authenticated
 if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
-    // Prompt for credentials
-    if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
-        $_SERVER['PHP_AUTH_USER'] !== UPLOAD_USERNAME || $_SERVER['PHP_AUTH_PW'] !== UPLOAD_PASSWORD) {
-        header('WWW-Authenticate: Basic realm="Uploader Access"');
-        header('HTTP/1.0 401 Unauthorized');
-        echo 'Unauthorized: You need to provide valid credentials to access this page.';
-        exit;
-    }
+	// Prompt for credentials
+	if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
+		$_SERVER['PHP_AUTH_USER'] !== UPLOAD_USERNAME || $_SERVER['PHP_AUTH_PW'] !== UPLOAD_PASSWORD) {
+		header('WWW-Authenticate: Basic realm="Uploader Access"');
+		header('HTTP/1.0 401 Unauthorized');
+		echo 'Unauthorized: You need to provide valid credentials to access this page.';
+		exit;
+	}
 
-    // If valid credentials are provided, authenticate the user
-    $_SESSION['authenticated'] = true;
+	// If valid credentials are provided, authenticate the user
+	$_SESSION['authenticated'] = true;
 }
 
 // Continue with the rest of your upload logic...
@@ -151,25 +151,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	}
 
 	if (!empty($_FILES['file']['tmp_name'])) {
-	    // Calculate the hash of the uploaded temporary file
-	    $hash = calculateFileHash($_FILES['file']['tmp_name']);
+		// Calculate the hash of the uploaded temporary file
+		$hash = calculateFileHash($_FILES['file']['tmp_name']);
 
-	    // Compare with existing files in the upload directory
-	    $existingFiles = glob($uploadDir . '*');
-	    foreach ($existingFiles as $existingFile) {
-	        if (calculateFileHash($existingFile) === $hash) {
-	            // If a duplicate is detected, return the file URL in the error response
-	            $existingFileName = basename($existingFile); // Extract the filename
-	            $existingFileUrl = 'uploads/' . $existingFileName; // Create the URL
+		// Compare with existing files in the upload directory
+		$existingFiles = glob($uploadDir . '*');
+		foreach ($existingFiles as $existingFile) {
+			if (calculateFileHash($existingFile) === $hash) {
+				// If a duplicate is detected, return the file details
 
-	            http_response_code(400);
-	            echo json_encode([
-	                'error' => 'Duplicate file detected',
-	                'existingFileUrl' => $existingFileUrl,
-	            ]);
-	            exit;
-	        }
-	    }
+				$existingFileName = basename($existingFile); // Extract the filename
+				$existingFileUrl = 'uploads/' . $existingFileName; // Create the URL
+
+				// Get file size
+				$fileSize = filesize($existingFile); // Size in bytes
+				$fileSizeKb = round($fileSize / 1024, 2); // Convert to KB
+
+				// Get file dimensions (for images)
+				$dimensions = null;
+				if (in_array(mime_content_type($existingFile), ['image/jpeg', 'image/png', 'image/gif'])) {
+					[$width, $height] = getimagesize($existingFile);
+					$dimensions = "{$width}x{$height}";
+				}
+
+				// Respond with duplicate file info
+				http_response_code(400);
+				echo json_encode([
+					'error' => 'Duplicate file detected',
+					'existingFileUrl' => $existingFileUrl,
+					'fileSize' => "{$fileSizeKb} KB",
+					'fileDimensions' => $dimensions ?: 'N/A'
+				]);
+				exit;
+			}
+		}
 	}
 
 	if (!move_uploaded_file($file['tmp_name'], $destination)) {
