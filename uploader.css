@@ -1,0 +1,263 @@
+body {
+	font-family: Arial, sans-serif;
+	margin: 0;
+	/* remove empty space below footer on short content pages 1/2 */
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	/* blue */
+	--color1: hsl(200 100% 32%);
+	--color1light: hsl(200 100% 94%);
+	/* green */
+	--color2: hsl(120 100% 32%);
+	--color2light: hsl(120 100% 94%);
+	/* orange */
+	--color3: hsl(30 100% 32%);
+	--color3light: hsl(30 100% 94%);
+	--white: hsl(0 0% 94%);
+	--black: hsl(0 0% 32%);
+	--grey: hsl(30 0% 50%);
+	background: var(--white);
+	color: var(--black);
+	--borderRad: .25rem;
+}
+
+header,
+main,
+footer {
+	padding: 1rem;
+}
+
+footer {
+	/* remove empty space below footer on short content pages 2/2 */
+	margin-top: auto;
+}
+
+dialog {
+	place-self: anchor-center;
+	border: none;
+	border-radius: var(--borderRad);
+	padding: 2rem;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	max-width: 300px;
+	text-align: center;
+}
+
+dialog form {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+dialog form input {
+	padding: .5em;
+	font-size: 1rem;
+	border: 1px solid var(--grey);
+	border-radius: var(--borderRad);
+}
+
+dialog form button {
+	padding: .5em 1em;
+	font-size: 1rem;
+	background-color: var(--color1light);
+	border: 1px solid var(--color1);
+	border-radius: var(--borderRad);
+	text-decoration: none;
+	color: var(--color1);
+	transition: all 0.5s;
+	cursor: pointer;
+}
+
+dialog form button:hover {
+	background-color: var(--color1);
+	color: var(--white);
+}
+
+header {
+	display: flex;
+	align-items: center;
+	gap: 2rem;
+}
+
+.uname {
+	display: flex;
+	flex-grow: 1;
+	justify-content: end;
+}
+
+.logout-btn {
+	padding: .5em 1em;
+	background-color: var(--color1light);
+	border: 1px solid var(--color1);
+	border-radius: var(--borderRad);
+	text-decoration: none;
+	color: var(--color1);
+	transition: all 0.5s;
+}
+
+.logout-btn:hover {
+	background: var(--color1);
+	color: var(--white);
+}
+
+main {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+}
+
+.upload-zone {
+	border: 2px dashed var(--black);
+	border-radius: var(--borderRad);
+	padding: 2rem;
+	text-align: center;
+	color: var(--black);
+	font-size: 1.25rem;
+	cursor: pointer;
+	transition: all 0.5s;
+}
+
+.upload-zone:hover,
+.upload-zone:focus-visible {
+	border-color: var(--white);
+	color: var(--white);
+	background: var(--black);
+	outline: none;
+}
+
+.upload-zone.highlight {
+	background-color: var(--color3light);
+	border-color: var(--color3);
+	color: var(--color3);
+}
+
+.upload-zone.dragover {
+	background-color: var(--color2light);
+	border-color: var(--color2);
+}
+
+.fileCards {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.fileCard {
+	padding: 0 1rem;
+	border: 1px solid var(--grey);
+	border-radius: var(--borderRad);
+}
+
+.fileCard span {
+	margin-left: 1em;
+}
+
+.progress {
+	height: .25rem;
+	background-color: #00aaff;
+	margin-top: 5px;
+	border-radius: 2px;
+}
+
+.results {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.copy-link {
+	cursor: pointer;
+	color: #007bff;
+	text-decoration: underline;
+}
+
+.preview {
+	margin-left: 1em;
+	width: auto;
+	height: auto;
+	max-height: 80px;
+	border: 1px solid var(--grey);
+}
+
+.settings {
+	margin-bottom: 2rem;
+}
+
+.d-none {
+	display: none;
+}
+
+.image-container {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+.image-card {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: .5rem;
+	width: 256px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: .25rem;
+/*	overflow: hidden;*/
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+	text-align: left;
+}
+
+.image-card img {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-height: 256px;
+	border: 1px solid var(--grey);
+}
+
+.image-info {}
+
+.image-info p {
+	margin: 0;
+	font-size: 14px;
+}
+.image-info p  + p{
+	margin-top:.25em;
+}
+
+.image-dialog {
+	border: none;
+	border-radius: 1rem;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	width: auto;
+	max-width:90%;
+}
+
+html:has(dialog[open]){
+	overflow:hidden;
+}
+.image-dialog img {
+	width: 100%;
+}
+
+.image-dialog .details {
+	margin-top: 10px;
+}
+
+.image-dialog .close-btn {
+	display: block;
+	margin: 10px auto;
+	padding: 10px 20px;
+	font-size: 16px;
+	background-color: #007bff;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.image-dialog .close-btn:hover {
+	background-color: #0056b3;
+}
