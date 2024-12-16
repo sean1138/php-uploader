@@ -43,6 +43,16 @@ dialog {
 	text-align: center;
 }
 
+dialog[open]{
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+dialog::backdrop {
+  background-color: white;
+}
+
 dialog form {
 	display: flex;
 	flex-direction: column;
@@ -227,19 +237,57 @@ main {
 	margin-top:.25em;
 }
 
+dialog .controls{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 2rem;
+}
+dialog .controls img{
+	display: block;
+	width: 48px;
+	height: 48px;
+	cursor: pointer;
+}
+dialog .controls .previous-img{
+	transform: rotate(180deg)
+}
 .image-dialog {
-	border: none;
-	border-radius: 1rem;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	padding:.25rem;
 	width: auto;
-	max-width:90%;
+	max-width: calc(96vw - 2rem);
+	max-height: calc(96vh - 3rem);
+	border: none;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	text-align: left;
+}
+
+.image-dialog::backdrop {
+  background-color: black;
+  opacity: 0.5;
 }
 
 html:has(dialog[open]){
 	overflow:hidden;
 }
 .image-dialog img {
-	width: 100%;
+	width: calc(100% - 2px);
+	height: auto;
+/*	max-height: calc(76vh - 2px);*/
+}
+#dialogImage{
+	border: 1px solid var(--grey);
+}
+.image-dialog img.bigger{
+	height:auto;
+}
+.image-dialog:has(img.bigger){
+	margin:0;
+	max-height: 100vh;
+	max-width: 100vw;
+}
+.image-dialog:has(img.bigger) .close-btn{
+	display:none;
 }
 
 .image-dialog .details {
@@ -260,4 +308,8 @@ html:has(dialog[open]){
 
 .image-dialog .close-btn:hover {
 	background-color: #0056b3;
+}
+
+.image-dialog .close-icon{
+
 }
