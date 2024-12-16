@@ -191,9 +191,11 @@ require_once 'uploader-validate-multi-user.php';
 	<!-- File Uploader -->
 	<header>
 		<h1>File Uploader</h1>
-		<?php if (isset($_SESSION['username'])): ?>
-		    <span class="uname">Logged in as: <strong><?= htmlspecialchars($_SESSION['username']) ?></strong></span>
-		<?php endif; ?>
+		<span class="uname">
+			<?php if (isset($_SESSION['username'])): ?>
+				Logged in as: <strong><?= htmlspecialchars($_SESSION['username']) ?></strong>
+			<?php endif; ?>
+		</span>
 		<a href="?logout" class="logout-btn">Logout</a>
 	</header>
 	<main>
