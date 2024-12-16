@@ -1,6 +1,6 @@
 <?php
 // use uploader-validate-multi-user.php or uploader-validate-single-user.php per your requirements
-require_once 'uploader-validate-multi-user.php';
+require_once 'uploader-validate-multi-user-roles.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,171 +8,8 @@ require_once 'uploader-validate-multi-user.php';
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" type="image/png" href="upload-svgrepo-com.svg">
+	<link rel="stylesheet" href="uploader.css">
 	<title>File Uploader</title>
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			margin: 0;
-			/* remove empty space below footer on short content pages 1/2 */
-			display: flex;
-			flex-direction: column;
-			min-height: 100vh;
-			/* blue */
-			--color1: hsl(200 100% 32%);
-			--color1light: hsl(200 100% 94%);
-			/* green */
-			--color2: hsl(120 100% 32%);
-			--color2light: hsl(120 100% 94%);
-			/* orange */
-			--color3: hsl(30 100% 32%);
-			--color3light: hsl(30 100% 94%);
-			--white: hsl(0 0% 94%);
-			--black: hsl(0 0% 32%);
-			--grey: hsl(30 0% 50%);
-			background: var(--white);
-			color: var(--black);
-			--borderRad: .25rem;
-		}
-		header,
-		main,
-		footer {
-			padding: 1rem;
-		}
-		footer {
-			/* remove empty space below footer on short content pages 2/2 */
-			margin-top: auto;
-		}
-		dialog {
-			place-self: anchor-center;
-			border: none;
-			border-radius: var(--borderRad);
-			padding: 2rem;
-			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-			max-width: 300px;
-			text-align: center;
-		}
-		dialog form {
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-		}
-		dialog form input {
-			padding: .5em;
-			font-size: 1rem;
-			border: 1px solid var(--grey);
-			border-radius: var(--borderRad);
-		}
-		dialog form button {
-			padding: .5em 1em;
-			font-size: 1rem;
-			background-color: var(--color1light);
-			border:1px solid var(--color1);
-			border-radius: var(--borderRad);
-			text-decoration: none;
-			color: var(--color1);
-			transition: all 0.5s;
-			cursor: pointer;
-		}
-		dialog form button:hover {
-			background-color: var(--color1);
-			color: var(--white);
-		}
-		header {
-			display: flex;
-			align-items: center;
-			gap: 2rem;
-		}
-		.uname{
-			display: flex;
-			flex-grow: 1;
-			justify-content: end;
-		}
-		.logout-btn {
-			padding: .5em 1em;
-			background-color: var(--color1light);
-			border:1px solid var(--color1);
-			border-radius: var(--borderRad);
-			text-decoration: none;
-			color: var(--color1);
-			transition: all 0.5s;
-		}
-		.logout-btn:hover{
-			background: var(--color1);
-			color: var(--white);
-		}
-		main{
-			display: flex;
-			flex-direction: column;
-			gap: 2rem;
-		}
-		.upload-zone {
-			border: 2px dashed var(--black);
-			border-radius: var(--borderRad);
-			padding: 2rem;
-			text-align: center;
-			color: var(--black);
-			font-size: 1.25rem;
-			cursor: pointer;
-			transition: all 0.5s;
-		}
-		.upload-zone:hover, .upload-zone:focus-visible{
-			border-color: var(--white);
-			color: var(--white);
-			background: var(--black);
-			outline:none;
-		}
-		.upload-zone.highlight {
-			background-color: var(--color3light);
-			border-color: var(--color3);
-			color: var(--color3);
-		}
-		.upload-zone.dragover {
-			background-color: var(--color2light);
-			border-color: var(--color2);
-		}
-		.fileCards{
-			display: flex;
-			flex-direction: column;
-			gap: 1rem;
-		}
-		.fileCard {
-			padding: 0 1rem;
-			border: 1px solid var(--grey);
-			border-radius: var(--borderRad);
-		}
-		.fileCard span{
-			margin-left:1em;
-		}
-		.progress {
-			height: .25rem;
-			background-color: #00aaff;
-			margin-top: 5px;
-			border-radius: 2px;
-		}
-		.results{
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-		}
-		.copy-link {
-			cursor: pointer;
-			color: #007bff;
-			text-decoration: underline;
-		}
-		.preview{
-			margin-left:1em;
-			width: auto;
-			height: auto;
-			max-height: 80px;
-			border: 1px solid var(--grey);
-		}
-		.settings {
-			margin-bottom: 2rem;
-		}
-		.d-none{
-			display:none;
-		}
-	</style>
 </head>
 <body>
 <?php if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true): ?>
@@ -193,8 +30,8 @@ require_once 'uploader-validate-multi-user.php';
 	<header>
 		<h1>File Uploader</h1>
 		<span class="uname">
-			<?php if (isset($_SESSION['username'])): ?>
-				Logged in as: <strong><?= htmlspecialchars($_SESSION['username']) ?></strong>
+			<?php if (isset($_SESSION['username']) && isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true): ?>
+				Logged in as <?= htmlspecialchars($_SESSION['role']) ?>: <strong><?= htmlspecialchars($_SESSION['username']) ?></strong>
 			<?php endif; ?>
 		</span>
 		<a href="?logout" class="logout-btn">Logout</a>
@@ -219,7 +56,7 @@ require_once 'uploader-validate-multi-user.php';
 		<div class="fileCards" id="fileList"></div>
 	</main>
 	<footer>
-		<p style="margin:0;text-align:center;">VSXD 2024.12.15</p>
+		<p style="margin:0;text-align:center;">VSXD 2024.12.15 <br><a href="uploader-viewer.php">Viewer</a></p>
 	</footer>
 	<script>
 		const uploadZone = document.getElementById('uploadZone');

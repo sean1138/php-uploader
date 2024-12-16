@@ -1,7 +1,7 @@
 <?php
 // upload.php
 // use uploader-validate-multi-user.php or uploader-validate-single-user.php per your requirements
-require_once 'uploader-validate-multi-user.php';
+require_once 'uploader-validate-multi-user-roles.php';
 
 // debug
 function debugLog($message) {
