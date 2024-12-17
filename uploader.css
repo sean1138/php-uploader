@@ -50,7 +50,7 @@ dialog[open]{
 }
 
 dialog::backdrop {
-  background-color: white;
+	background-color: white;
 }
 
 dialog form {
@@ -274,8 +274,8 @@ dialog .controls .previous-img{
 }
 
 .viewer-dialog::backdrop {
-  background-color: black;
-  opacity: 0.5;
+	background-color: black;
+	opacity: 0.5;
 }
 
 html:has(dialog[open]){

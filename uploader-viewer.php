@@ -197,8 +197,7 @@ foreach ($logEntries as $logEntry) {
 		const uploadDate = card.getAttribute('data-upload-date');
 
 		// Safely get the file URL and file extension
-		const imgElement = card.querySelector('img'); // Check for an image
-		const fileUrl = imgElement ? imgElement.src : uploadUrl + card.getAttribute('data-filename');
+		const fileUrl = uploadUrl + card.getAttribute('data-filename');
 		const fileExtension = filename.split('.').pop().toLowerCase();
 		// Debugging
 		console.log("File URL:", fileUrl);
@@ -207,8 +206,6 @@ foreach ($logEntries as $logEntry) {
 		dialogImage.style.display = 'none'; // Hide the image element initially
 		const dynamicContent = document.getElementById('dynamicContent');
 		dynamicContent.innerHTML = ''; // Clear any previously added content
-
-
 
 		// Determine how to display the file based on its type
 		if (['jpeg', 'jpg', 'png', 'gif'].includes(fileExtension)) {
@@ -258,7 +255,6 @@ foreach ($logEntries as $logEntry) {
 		dialog.showModal();
 	}
 
-
 	// Close the dialog when the close button is clicked
 	closeDialog.addEventListener('click', () => {
 		dialog.close();
@@ -270,10 +266,12 @@ foreach ($logEntries as $logEntry) {
 			dialog.close();
 		}
 	});
+
 	// focus to close button
 	dialog.addEventListener('show', () => {
 		closeDialog.focus();
 	});
+
 	// return focus to card
 	dialog.addEventListener('close', () => {
 		const focusedCard = document.querySelector('.image-card:focus');
@@ -281,10 +279,7 @@ foreach ($logEntries as $logEntry) {
 			focusedCard.focus();
 		}
 	});
-	// image enbiggening
-	// dialogImage.addEventListener("click", function() {
-	// 	this.classList.toggle("bigger");
-	// });
+
 	// Navigate to the next or previous image using arrow keys
 	dialog.addEventListener('keydown', event => {
 		if (event.key === 'ArrowRight') {
@@ -293,6 +288,7 @@ foreach ($logEntries as $logEntry) {
 			goToPreviousImage();
 		}
 	});
+
 	// Add click event listeners to the navigation buttons
 	dialogNext.addEventListener('click', goToNextImage);
 	dialogPrevious.addEventListener('click', goToPreviousImage);
