@@ -116,6 +116,7 @@ foreach ($logEntries as $logEntry) {
 				<!-- Unsupported File Card -->
 				<div class="image-card unsupported-card" data-filename="<?= $filename ?>" data-filesize="<?= htmlspecialchars($file['fileSize']) ?>" data-upload-date="<?= htmlspecialchars($file['uploadDate']) ?>">
 					<div class="card-info">
+						<img src="uploader-svgrepo-com-debug-breakpoint-unsupported.svg" alt="unsupported file type" alt="Unsupported File Type">
 						<p><strong>Filename:</strong> <span id="Filename"><?= $filename ?></span></p>
 						<p><strong>Upload Date:</strong> <span id="UploadDate"> <?= isset($file['uploadDate']) ? htmlspecialchars($file['uploadDate']) : 'Unknown'; ?></span></p>
 						<p>Preview not available for this file type.</p>
@@ -240,8 +241,14 @@ foreach ($logEntries as $logEntry) {
 			audio.controls = true;
 			dynamicContent.appendChild(audio);
 		} else {
+			const dialogImage = document.createElement('img');
+			dialogImage.src = 'uploader-svgrepo-com-debug-breakpoint-unsupported.svg';
+			dialogImage.alt = 'unsupported file type';
+			dialogImage.style.height = '256px'
+			dialogImage.style.display = 'block';
 			const message = document.createElement('p');
-			message.textContent = 'Preview not available for this file type.';
+			message.textContent = 'Preview not available for .' + fileExtension + ' files.';
+			dynamicContent.appendChild(dialogImage);
 			dynamicContent.appendChild(message);
 		}
 
