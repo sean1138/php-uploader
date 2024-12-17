@@ -71,8 +71,8 @@ foreach ($logEntries as $logEntry) {
 			<?php elseif ($extension === 'txt'): ?>
 				<!-- Text File Card -->
 				<div class="image-card txt-card" data-filename="<?= $filename ?>" data-filesize="<?= htmlspecialchars($file['fileSize']) ?>" data-upload-date="<?= htmlspecialchars($file['uploadDate']) ?>">
+					<pre><?= htmlspecialchars(file_get_contents($fileUrl)) ?></pre>
 					<div class="card-info">
-						<pre><?= htmlspecialchars(file_get_contents($fileUrl)) ?></pre>
 						<p><strong>Filename:</strong> <span id="Filename"><?= $filename ?></span></p>
 						<p><strong>Upload Date:</strong> <span id="UploadDate"> <?= isset($file['uploadDate']) ? htmlspecialchars($file['uploadDate']) : 'Unknown'; ?></span></p>
 					</div>
@@ -113,8 +113,8 @@ foreach ($logEntries as $logEntry) {
 			<?php else: ?>
 				<!-- Unsupported File Card -->
 				<div class="image-card unsupported-card" data-filename="<?= $filename ?>" data-filesize="<?= htmlspecialchars($file['fileSize']) ?>" data-upload-date="<?= htmlspecialchars($file['uploadDate']) ?>">
+					<img src="uploader-svgrepo-com-debug-breakpoint-unsupported.svg" alt="unsupported file type" alt="Unsupported File Type">
 					<div class="card-info">
-						<img src="uploader-svgrepo-com-debug-breakpoint-unsupported.svg" alt="unsupported file type" alt="Unsupported File Type">
 						<p><strong>Filename:</strong> <span id="Filename"><?= $filename ?></span></p>
 						<p><strong>Upload Date:</strong> <span id="UploadDate"> <?= isset($file['uploadDate']) ? htmlspecialchars($file['uploadDate']) : 'Unknown'; ?></span></p>
 						<p>Preview not available for this file type.</p>

@@ -14,11 +14,13 @@ body {
 	/* orange */
 	--color3: hsl(30 100% 32%);
 	--color3light: hsl(30 100% 94%);
-	--white: hsl(0 0% 94%);
-	--black: hsl(0 0% 32%);
+	--bg-light: hsl(0 0% 94%);
+	--fg-dark: hsl(0 0% 32%);
+	--white: #fff;
 	--grey: hsl(30 0% 50%);
-	background: var(--white);
-	color: var(--black);
+	background: var(--bg-light);
+	color: var(--fg-dark);
+	--border1: 1px solid;
 	--borderRad: .25rem;
 }
 
@@ -62,7 +64,7 @@ dialog form {
 dialog form input {
 	padding: .5em;
 	font-size: 1rem;
-	border: 1px solid var(--grey);
+	border: var(--border1) var(--grey);
 	border-radius: var(--borderRad);
 }
 
@@ -70,7 +72,7 @@ dialog form button {
 	padding: .5em 1em;
 	font-size: 1rem;
 	background-color: var(--color1light);
-	border: 1px solid var(--color1);
+	border: var(--border1) var(--color1);
 	border-radius: var(--borderRad);
 	text-decoration: none;
 	color: var(--color1);
@@ -80,7 +82,7 @@ dialog form button {
 
 dialog form button:hover {
 	background-color: var(--color1);
-	color: var(--white);
+	color: var(--bg-light);
 }
 
 header {
@@ -98,7 +100,7 @@ header {
 .logout-btn {
 	padding: .5em 1em;
 	background-color: var(--color1light);
-	border: 1px solid var(--color1);
+	border: var(--border1) var(--color1);
 	border-radius: var(--borderRad);
 	text-decoration: none;
 	color: var(--color1);
@@ -107,7 +109,7 @@ header {
 
 .logout-btn:hover {
 	background: var(--color1);
-	color: var(--white);
+	color: var(--bg-light);
 }
 
 main {
@@ -117,11 +119,11 @@ main {
 }
 
 .upload-zone {
-	border: 2px dashed var(--black);
+	border: 2px dashed var(--fg-dark);
 	border-radius: var(--borderRad);
 	padding: 2rem;
 	text-align: center;
-	color: var(--black);
+	color: var(--fg-dark);
 	font-size: 1.25rem;
 	cursor: pointer;
 	transition: all 0.5s;
@@ -129,9 +131,9 @@ main {
 
 .upload-zone:hover,
 .upload-zone:focus-visible {
-	border-color: var(--white);
-	color: var(--white);
-	background: var(--black);
+	border-color: var(--bg-light);
+	color: var(--bg-light);
+	background: var(--fg-dark);
 	outline: none;
 }
 
@@ -154,7 +156,7 @@ main {
 
 .fileCard {
 	padding: 0 1rem;
-	border: 1px solid var(--grey);
+	border: var(--border1) var(--grey);
 	border-radius: var(--borderRad);
 }
 
@@ -186,7 +188,7 @@ main {
 	width: auto;
 	height: auto;
 	max-height: 80px;
-	border: 1px solid var(--grey);
+	border: var(--border1) var(--grey);
 }
 
 .settings {
@@ -210,9 +212,9 @@ main {
 	gap: 1rem;
 	padding: .5rem;
 	width: 256px;
-	background: #fff;
-	border: 1px solid #ddd;
-	border-radius: .25rem;
+	background: var(--white);
+	border: var(--border1) var(--grey);
+	border-radius: var(--borderRad);
 /*	overflow: hidden;*/
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	cursor: pointer;
@@ -224,7 +226,7 @@ main {
 	width: 100%;
 	height: auto;
 	max-height: 256px;
-	border: 1px solid var(--grey);
+	border: var(--border1) var(--grey);
 }
 
 .cards-container audio{
@@ -233,7 +235,7 @@ main {
 }
 
 .cards-container pre{
-	word-wrap: wrap;
+	margin: 0;
 	overflow: auto;
 }
 
