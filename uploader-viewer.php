@@ -30,7 +30,7 @@ foreach ($logEntries as $logEntry) {
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" type="image/png" href="uploader-svgrepo-com-upload.svg">
 	<link rel="stylesheet" href="uploader.css">
-	<title>Uploaded Images</title>
+	<title>Uploaded Files Viewer</title>
 	<style>
 
 	</style>
@@ -38,7 +38,7 @@ foreach ($logEntries as $logEntry) {
 <body>
 
 <header>
-	<h1>Uploaded Images</h1>
+	<h1>Uploaded Files</h1>
 	<span class="uname">
 		<?php if (isset($_SESSION['username']) && isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true): ?>
 			Logged in as <?= htmlspecialchars($_SESSION['role']) ?>: <strong><?= htmlspecialchars($_SESSION['username']) ?></strong>
@@ -53,23 +53,21 @@ foreach ($logEntries as $logEntry) {
 			$filename = htmlspecialchars($file['fileName']);
 			$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 			$fileUrl = $uploadUrl . $filename;
-			// $fileUrl = htmlspecialchars($uploadUrl . $filename);
-
 
 			// Determine file type for rendering
 			if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])):
-			?>
-				<!-- Image Card -->
-				<div class="image-card" data-filename="<?= $filename ?>" data-filesize="<?= htmlspecialchars($file['fileSize']) ?>" data-dimensions="<?= htmlspecialchars($file['fileDimensions']) ?>" data-upload-date="<?= htmlspecialchars($file['uploadDate']) ?>">
-					<img src="<?= $fileUrl ?>" alt="<?= $filename ?>">
-					<div class="card-info">
-						<p><strong>Filename:</strong> <span id="Filename"><?= $filename ?></span></p>
-						<p><strong>File Size:</strong> <span id="FileSize"><?= isset($file['fileSize']) ? htmlspecialchars($file['fileSize']) : 'N/A'; ?></span></p>
-						<p><strong>Dimensions:</strong> <span id="Dimensions"> <?= isset($file['fileDimensions']) ? htmlspecialchars($file['fileDimensions']) : 'N/A'; ?></span></p>
-						<p><strong>Upload Date:</strong> <span id="UploadDate"> <?= isset($file['uploadDate']) ? htmlspecialchars($file['uploadDate']) : 'Unknown'; ?></span></p>
+		?>
+		<!-- Image Card -->
+		<div class="image-card" data-filename="<?= $filename ?>" data-filesize="<?= htmlspecialchars($file['fileSize']) ?>" data-dimensions="<?= htmlspecialchars($file['fileDimensions']) ?>" data-upload-date="<?= htmlspecialchars($file['uploadDate']) ?>">
+			<img src="<?= $fileUrl ?>" alt="<?= $filename ?>">
+			<div class="card-info">
+				<p><strong>Filename:</strong> <span id="Filename"><?= $filename ?></span></p>
+				<p><strong>File Size:</strong> <span id="FileSize"><?= isset($file['fileSize']) ? htmlspecialchars($file['fileSize']) : 'N/A'; ?></span></p>
+				<p><strong>Dimensions:</strong> <span id="Dimensions"> <?= isset($file['fileDimensions']) ? htmlspecialchars($file['fileDimensions']) : 'N/A'; ?></span></p>
+				<p><strong>Upload Date:</strong> <span id="UploadDate"> <?= isset($file['uploadDate']) ? htmlspecialchars($file['uploadDate']) : 'Unknown'; ?></span></p>
 
-					</div>
-				</div>
+			</div>
+		</div>
 			<?php elseif ($extension === 'txt'): ?>
 				<!-- Text File Card -->
 				<div class="image-card txt-card" data-filename="<?= $filename ?>" data-filesize="<?= htmlspecialchars($file['fileSize']) ?>" data-upload-date="<?= htmlspecialchars($file['uploadDate']) ?>">
@@ -132,7 +130,7 @@ foreach ($logEntries as $logEntry) {
 		<img src="uploader-svgrepo-com-close.svg" alt="close dialog" title="Close Dialog" class="close-icon" id="closeDialog">
 		<img src="uploader-svgrepo-com-arrow-right.svg" alt="Next Image" title="Next image" class="next-img" id="dialogNext">
 	</div>
-	<img id="dialogImage" src="" alt="" title="click to enlarge/shrink">
+	<img id="dialogImage" src="" alt="">
 	<div id="dynamicContent" class="dynamic-content"></div>
 	<div class="details d-none">
 		<p><strong>Filename:</strong> <span id="dialogFilename"></span></p>
