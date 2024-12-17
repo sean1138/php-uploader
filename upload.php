@@ -2,16 +2,29 @@
 // upload.php
 // use uploader-validate-multi-user.php or uploader-validate-single-user.php per your requirements
 require_once 'uploader-validate-multi-user-roles.php';
+require_once 'uploader-config.php';
 
 // debug
 function debugLog($message) {
 	file_put_contents(__DIR__ . '/debug.log', date('Y-m-d H:i:s') . " - " . $message . PHP_EOL, FILE_APPEND);
 }
 
-// Configuration
-$uploadDir = __DIR__ . '/uploads/'; // Ensure this directory is writable
-$maxFileSize = 200 * 1024 * 1024; // 200 MB
-$allowedFileTypes = ['image/jpeg', 'image/png', 'image/gif', 'text/plain', 'application/pdf', 'video/mp4', 'video/quicktime', 'video/webm', 'video/mpeg', 'audio/mpeg'];
+/**
+ * Converts a size in bytes to a human-readable format.
+ *
+ * @param int $size Size in bytes.
+ * @return string Human-readable size (e.g., "5 MB", "1 GB").
+ */
+function formatFileSize($size) {
+	$units = ['B', 'KB', 'MB', 'GB', 'TB'];
+	$unitIndex = 0;
+	while ($size >= 1024 && $unitIndex < count($units) - 1) {
+		$size /= 1024;
+		$unitIndex++;
+	}
+	return round($size, 2) . ' ' . $units[$unitIndex];
+}
+
 
 // paste from clipboard
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -69,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				'uploaderIP' => $_SERVER['REMOTE_ADDR'],
 				'expiry' => $expiry,
 			];
-			file_put_contents(__DIR__ . '/uploads/log.json', json_encode($logEntry) . PHP_EOL, FILE_APPEND);
+			file_put_contents(__DIR__ . $uploadDir . 'log.json', json_encode($logEntry) . PHP_EOL, FILE_APPEND);
 			debugLog("Log entry written.");
 
 			// Respond to the frontend
@@ -100,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// Validate file size
 	if ($file['size'] > $maxFileSize) {
 		http_response_code(400);
-		echo json_encode(['error' => 'File exceeds maximum size of 5 MB.']);
+		echo json_encode(['error' => 'File exceeds maximum size of ' . formatFileSize($maxFileSize) . '.']);
 		exit;
 	}
 

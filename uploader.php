@@ -166,6 +166,7 @@ require_once 'uploader-validate-multi-user-roles.php';
 
 					fileName.textContent = `Error: ${response.error}`;
 					progressBar.style.backgroundColor = 'red';
+					uploadZone.classList.remove('highlight');
 
 					if (response.existingFileUrl) {
 						uploadZone.classList.remove('highlight');
@@ -214,6 +215,7 @@ require_once 'uploader-validate-multi-user-roles.php';
 			xhr.onerror = () => {
 				fileName.textContent = 'Error uploading file.';
 				progressBar.style.backgroundColor = 'red';
+				uploadZone.classList.remove('highlight');
 			};
 
 			xhr.send(formData);

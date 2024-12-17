@@ -2,12 +2,14 @@
 // log-viewer.php
 // use uploader-validate-multi-user.php or uploader-validate-single-user.php per your requirements
 require_once 'uploader-validate-multi-user-roles.php';
+require_once 'uploader-config.php';
 
 // Path to the log.json file
-$logFilePath = __DIR__ . '/uploads/log.json';
+$logFilePath = $uploadDir . 'log.json';
 
 // Check if the log file exists
 if (!file_exists($logFilePath)) {
+	echo $logFilePath;
 	die("Log file not found.");
 }
 
@@ -19,7 +21,6 @@ $images = [];
 foreach ($logEntries as $logEntry) {
 	$images[] = json_decode($logEntry, true);
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -27,7 +28,7 @@ foreach ($logEntries as $logEntry) {
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" type="image/png" href="upload-svgrepo-com.svg">
+	<link rel="icon" type="image/png" href="uploader-svgrepo-com-upload.svg">
 	<link rel="stylesheet" href="uploader.css">
 	<title>Uploaded Images</title>
 	<style>
@@ -46,27 +47,92 @@ foreach ($logEntries as $logEntry) {
 	<a href="?logout" class="logout-btn">Logout</a>
 </header>
 <main>
-	<div class="image-container">
-		<?php foreach ($images as $image): ?>
-			<div class="image-card" data-filename="<?= htmlspecialchars($image['fileName']) ?>" data-filesize="<?= htmlspecialchars($image['fileSize']) ?>" data-dimensions="<?= htmlspecialchars($image['fileDimensions']) ?>" data-upload-date="<?= htmlspecialchars($image['uploadDate']) ?>">
-				<img class="big-image" src="uploads/<?= htmlspecialchars($image['fileName']) ?>" alt="<?= htmlspecialchars($image['fileName']) ?>">
-				<div class="image-info">
-					<p><strong>Filename:</strong> <span id="Filename"><?= htmlspecialchars($image['fileName']) ?></span></p>
-					<p><strong>File Size:</strong> <span id="FileSize"><?= htmlspecialchars($image['fileSize']) ?></span></p>
-					<p><strong>Dimensions:</strong> <span id="Dimensions"><?= htmlspecialchars($image['fileDimensions']) ?></span></p>
-					<p><strong>Upload Date:</strong> <span id="UploadDate"><?= htmlspecialchars($image['uploadDate']) ?></span></p>
+	<div class="cards-container">
+		<?php
+			foreach ($images as $file):
+			$filename = htmlspecialchars($file['fileName']);
+			$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+			$fileUrl = $uploadUrl . $filename;
+			// $fileUrl = htmlspecialchars($uploadUrl . $filename);
+
+
+			// Determine file type for rendering
+			if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])):
+			?>
+				<!-- Image Card -->
+				<div class="image-card" data-filename="<?= $filename ?>" data-filesize="<?= htmlspecialchars($file['fileSize']) ?>" data-dimensions="<?= htmlspecialchars($file['fileDimensions']) ?>" data-upload-date="<?= htmlspecialchars($file['uploadDate']) ?>">
+					<img src="<?= $fileUrl ?>" alt="<?= $filename ?>">
+					<div class="card-info">
+						<p><strong>Filename:</strong> <span id="Filename"><?= $filename ?></span></p>
+						<p><strong>File Size:</strong> <span id="FileSize"><?= isset($file['fileSize']) ? htmlspecialchars($file['fileSize']) : 'N/A'; ?></span></p>
+						<p><strong>Dimensions:</strong> <span id="Dimensions"> <?= isset($file['fileDimensions']) ? htmlspecialchars($file['fileDimensions']) : 'N/A'; ?></span></p>
+						<p><strong>Upload Date:</strong> <span id="UploadDate"> <?= isset($file['uploadDate']) ? htmlspecialchars($file['uploadDate']) : 'Unknown'; ?></span></p>
+
+					</div>
 				</div>
-			</div>
+			<?php elseif ($extension === 'txt'): ?>
+				<!-- Text File Card -->
+				<div class="image-card txt-card" data-filename="<?= $filename ?>" data-filesize="<?= htmlspecialchars($file['fileSize']) ?>" data-upload-date="<?= htmlspecialchars($file['uploadDate']) ?>">
+					<div class="card-info">
+						<pre><?= htmlspecialchars(file_get_contents($fileUrl)) ?></pre>
+						<p><strong>Filename:</strong> <span id="Filename"><?= $filename ?></span></p>
+						<p><strong>Upload Date:</strong> <span id="UploadDate"> <?= isset($file['uploadDate']) ? htmlspecialchars($file['uploadDate']) : 'Unknown'; ?></span></p>
+					</div>
+				</div>
+			<?php elseif ($extension === 'pdf'): ?>
+				<!-- PDF File Card -->
+				<div class="image-card pdf-card" data-filename="<?= $filename ?>" data-filesize="<?= htmlspecialchars($file['fileSize']) ?>" data-upload-date="<?= htmlspecialchars($file['uploadDate']) ?>">
+					<iframe src="<?= $fileUrl ?>#zoom=FitH" width="100%" height="200px"></iframe>
+					<div class="card-info">
+						<p><strong>Filename:</strong> <span id="Filename"><?= $filename ?></span></p>
+						<p><strong>Upload Date:</strong> <span id="UploadDate"> <?= isset($file['uploadDate']) ? htmlspecialchars($file['uploadDate']) : 'Unknown'; ?></span></p>
+					</div>
+				</div>
+			<?php elseif (in_array($extension, ['mp4', 'webm', 'mov'])): ?>
+				<!-- Video File Card -->
+				<div class="image-card video-card" data-filename="<?= $filename ?>" data-filesize="<?= htmlspecialchars($file['fileSize']) ?>" data-upload-date="<?= htmlspecialchars($file['uploadDate']) ?>">
+					<video controls width="100%">
+						<source src="<?= $fileUrl ?>" type="video/<?= $extension ?>">
+						Your browser does not support the video tag.
+					</video>
+					<div class="card-info">
+						<p><strong>Filename:</strong> <span id="Filename"><?= $filename ?></span></p>
+						<p><strong>Upload Date:</strong> <span id="UploadDate"> <?= isset($file['uploadDate']) ? htmlspecialchars($file['uploadDate']) : 'Unknown'; ?></span></p>
+					</div>
+				</div>
+			<?php elseif (in_array($extension, ['mp3'])): ?>
+				<!-- Audio File Card -->
+				<div class="image-card audio-card" data-filename="<?= $filename ?>" data-filesize="<?= htmlspecialchars($file['fileSize']) ?>" data-upload-date="<?= htmlspecialchars($file['uploadDate']) ?>">
+					<audio controls>
+						<source src="<?= $fileUrl ?>" type="audio/mpeg">
+						Your browser does not support the audio tag.
+					</audio>
+					<div class="card-info">
+						<p><strong>Filename:</strong> <span id="Filename"><?= $filename ?></span></p>
+						<p><strong>Upload Date:</strong> <span id="UploadDate"> <?= isset($file['uploadDate']) ? htmlspecialchars($file['uploadDate']) : 'Unknown'; ?></span></p>
+					</div>
+				</div>
+			<?php else: ?>
+				<!-- Unsupported File Card -->
+				<div class="image-card unsupported-card" data-filename="<?= $filename ?>" data-filesize="<?= htmlspecialchars($file['fileSize']) ?>" data-upload-date="<?= htmlspecialchars($file['uploadDate']) ?>">
+					<div class="card-info">
+						<p><strong>Filename:</strong> <span id="Filename"><?= $filename ?></span></p>
+						<p><strong>Upload Date:</strong> <span id="UploadDate"> <?= isset($file['uploadDate']) ? htmlspecialchars($file['uploadDate']) : 'Unknown'; ?></span></p>
+						<p>Preview not available for this file type.</p>
+					</div>
+				</div>
+			<?php endif; ?>
 		<?php endforeach; ?>
 	</div>
 </main>
-<dialog id="imageDialog" class="image-dialog">
+<dialog id="viewerDialog" class="viewer-dialog">
 	<div class="controls">
 		<img src="uploader-svgrepo-com-arrow-right.svg" alt="Previous Image" title="Previous image" class="previous-img" id="dialogPrevious">
 		<img src="uploader-svgrepo-com-close.svg" alt="close dialog" title="Close Dialog" class="close-icon" id="closeDialog">
 		<img src="uploader-svgrepo-com-arrow-right.svg" alt="Next Image" title="Next image" class="next-img" id="dialogNext">
 	</div>
 	<img id="dialogImage" src="" alt="" title="click to enlarge/shrink">
+	<div id="dynamicContent" class="dynamic-content"></div>
 	<div class="details d-none">
 		<p><strong>Filename:</strong> <span id="dialogFilename"></span></p>
 		<p><strong>File Size:</strong> <span id="dialogFileSize"></span></p>
@@ -83,9 +149,8 @@ foreach ($logEntries as $logEntry) {
 	</p>
 </footer>
 <script>
-	// Select all image cards
 	const imageCards = document.querySelectorAll('.image-card');
-	const dialog = document.getElementById('imageDialog');
+	const dialog = document.getElementById('viewerDialog');
 	const dialogImage = document.getElementById('dialogImage');
 	const dialogFilename = document.getElementById('dialogFilename');
 	const dialogFileSize = document.getElementById('dialogFileSize');
@@ -96,6 +161,7 @@ foreach ($logEntries as $logEntry) {
 	const closeDialog = document.getElementById('closeDialog');
 	const ENTER = 13;
 	const SPACE = 32;
+	const uploadUrl = '<?= $uploadUrl ?>';
 	let currentIndex = -1; // Track the currently open image
 
 	// Make image cards focusable for tab navigation
@@ -129,20 +195,69 @@ foreach ($logEntries as $logEntry) {
 		const filesize = card.getAttribute('data-filesize');
 		const dimensions = card.getAttribute('data-dimensions');
 		const uploadDate = card.getAttribute('data-upload-date');
-		const imageUrl = card.querySelector('img').src;
-		const imageAlt = card.querySelector('img').alt;
 
-		// Populate the dialog with image and details
-		dialogImage.src = imageUrl;
-		dialogImage.alt = imageAlt;
+		// Safely get the file URL and file extension
+		const imgElement = card.querySelector('img'); // Check for an image
+		const fileUrl = imgElement ? imgElement.src : uploadUrl + card.getAttribute('data-filename');
+		const fileExtension = filename.split('.').pop().toLowerCase();
+		// Debugging
+		console.log("File URL:", fileUrl);
+
+		// Clear existing content in the dialog
+		dialogImage.style.display = 'none'; // Hide the image element initially
+		const dynamicContent = document.getElementById('dynamicContent');
+		dynamicContent.innerHTML = ''; // Clear any previously added content
+
+
+
+		// Determine how to display the file based on its type
+		if (['jpeg', 'jpg', 'png', 'gif'].includes(fileExtension)) {
+			dialogImage.src = fileUrl;
+			dialogImage.alt = filename;
+			dialogImage.style.display = 'block';
+		} else if (['txt'].includes(fileExtension)) {
+			fetch(fileUrl)
+				.then(response => response.text())
+				.then(content => {
+					const pre = document.createElement('pre');
+					pre.textContent = content;
+					pre.className = 'txt';
+					dynamicContent.appendChild(pre);
+				});
+		} else if (['pdf'].includes(fileExtension)) {
+			const iframe = document.createElement('iframe');
+			const fitH = '#view=FitH';
+			iframe.src = fileUrl + fitH;
+			iframe.style.width = '100%';
+			iframe.style.height = '600px';
+			dynamicContent.appendChild(iframe);
+		} else if (['mp4', 'webm', 'mpeg', 'mov'].includes(fileExtension)) {
+			const video = document.createElement('video');
+			video.src = fileUrl;
+			video.controls = true;
+			video.style.width = '100%';
+			dynamicContent.appendChild(video);
+		} else if (['mp3'].includes(fileExtension)) {
+			const audio = document.createElement('audio');
+			audio.src = fileUrl;
+			audio.controls = true;
+			dynamicContent.appendChild(audio);
+		} else {
+			const message = document.createElement('p');
+			message.textContent = 'Preview not available for this file type.';
+			dynamicContent.appendChild(message);
+		}
+
+		// Populate the file details
 		dialogFilename.textContent = filename;
 		dialogFileSize.textContent = filesize;
-		dialogDimensions.textContent = dimensions;
+		dialogDimensions.textContent = dimensions || 'N/A';
 		dialogUploadDate.textContent = uploadDate;
 
 		// Show the dialog
 		dialog.showModal();
 	}
+
 
 	// Close the dialog when the close button is clicked
 	closeDialog.addEventListener('click', () => {
@@ -167,29 +282,28 @@ foreach ($logEntries as $logEntry) {
 		}
 	});
 	// image enbiggening
-	dialogImage.addEventListener("click", function() {
-		this.classList.toggle("bigger");
-	});
+	// dialogImage.addEventListener("click", function() {
+	// 	this.classList.toggle("bigger");
+	// });
 	// Navigate to the next or previous image using arrow keys
 	dialog.addEventListener('keydown', event => {
-	    if (event.key === 'ArrowRight') {
-	        goToNextImage();
-	    } else if (event.key === 'ArrowLeft') {
-	        goToPreviousImage();
-	    }
+		if (event.key === 'ArrowRight') {
+			goToNextImage();
+		} else if (event.key === 'ArrowLeft') {
+			goToPreviousImage();
+		}
 	});
 	// Add click event listeners to the navigation buttons
 	dialogNext.addEventListener('click', goToNextImage);
 	dialogPrevious.addEventListener('click', goToPreviousImage);
 	function goToNextImage() {
-	    currentIndex = (currentIndex + 1) % imageCards.length; // Wrap around to the start
-	    openDialogWithCardData(imageCards[currentIndex]);
+		currentIndex = (currentIndex + 1) % imageCards.length; // Wrap around to the start
+		openDialogWithCardData(imageCards[currentIndex]);
 	}
 	function goToPreviousImage() {
-	    currentIndex = (currentIndex - 1 + imageCards.length) % imageCards.length; // Wrap around to the end
-	    openDialogWithCardData(imageCards[currentIndex]);
+		currentIndex = (currentIndex - 1 + imageCards.length) % imageCards.length; // Wrap around to the end
+		openDialogWithCardData(imageCards[currentIndex]);
 	}
-
 
 </script>
 </body>

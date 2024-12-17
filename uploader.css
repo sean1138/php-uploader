@@ -197,14 +197,14 @@ main {
 	display: none;
 }
 
-.image-container {
+.cards-container {
 	display: flex;
 	justify-content: center;
 	flex-wrap: wrap;
 	gap: 1rem;
 }
 
-.image-card {
+.cards-container :where(.image-card, .txt-card, .pdf-card, .video-card, .audio-card, .unsupported-card) {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
@@ -219,7 +219,7 @@ main {
 	text-align: left;
 }
 
-.image-card img {
+.cards-container :where(.image-card, .txt-card, .pdf-card, .video-card, .audio-card, .unsupported-card) :where(img, video, audio, iframe, pre) {
 	display: block;
 	width: 100%;
 	height: auto;
@@ -227,13 +227,24 @@ main {
 	border: 1px solid var(--grey);
 }
 
-.image-info {}
+.cards-container audio{
+	height:revert;
+	border:none;
+}
 
-.image-info p {
+.cards-container pre{
+	word-wrap: wrap;
+	overflow: auto;
+}
+
+.card-info p{
 	margin: 0;
 	font-size: 14px;
+	word-wrap: wrap;
+	overflow-wrap: break-word;
 }
-.image-info p  + p{
+
+.card-info p  + p{
 	margin-top:.25em;
 }
 
@@ -252,17 +263,17 @@ dialog .controls img{
 dialog .controls .previous-img{
 	transform: rotate(180deg)
 }
-.image-dialog {
+.viewer-dialog {
 	padding:.25rem;
 	width: auto;
 	max-width: calc(96vw - 2rem);
-	max-height: calc(96vh - 3rem);
+	height: calc(96vh - 3rem);
 	border: none;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 	text-align: left;
 }
 
-.image-dialog::backdrop {
+.viewer-dialog::backdrop {
   background-color: black;
   opacity: 0.5;
 }
@@ -270,7 +281,7 @@ dialog .controls .previous-img{
 html:has(dialog[open]){
 	overflow:hidden;
 }
-.image-dialog img {
+.viewer-dialog img {
 	width: calc(100% - 2px);
 	height: auto;
 /*	max-height: calc(76vh - 2px);*/
@@ -278,23 +289,36 @@ html:has(dialog[open]){
 #dialogImage{
 	border: 1px solid var(--grey);
 }
-.image-dialog img.bigger{
-	height:auto;
-}
-.image-dialog:has(img.bigger){
-	margin:0;
-	max-height: 100vh;
-	max-width: 100vw;
-}
-.image-dialog:has(img.bigger) .close-btn{
+.viewer-dialog:has(img.bigger) .close-btn{
 	display:none;
 }
 
-.image-dialog .details {
+.viewer-dialog .dynamic-content:has(pre){
+	border: 1px solid var(--grey);
+}
+
+.viewer-dialog .dynamic-content pre{
+	margin: 1rem;
+	width:auto;
+	max-width:80ch;
+	text-wrap: auto;
+}
+.viewer-dialog .dynamic-content :where(video, audio){
+	display:block;
+	margin:0 auto;
+	wisth:auto;
+	max-height: calc(96vh - 3rem);
+}
+.viewer-dialog .dynamic-content iframe{
+	width:100%;
+	height: calc(86cqh - 48px - 1rem);
+}
+
+.viewer-dialog .details {
 	margin-top: 10px;
 }
 
-.image-dialog .close-btn {
+.viewer-dialog .close-btn {
 	display: block;
 	margin: 10px auto;
 	padding: 10px 20px;
@@ -306,10 +330,10 @@ html:has(dialog[open]){
 	cursor: pointer;
 }
 
-.image-dialog .close-btn:hover {
+.viewer-dialog .close-btn:hover {
 	background-color: #0056b3;
 }
 
-.image-dialog .close-icon{
+.viewer-dialog .close-icon{
 
 }
