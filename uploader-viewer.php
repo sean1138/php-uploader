@@ -288,9 +288,17 @@ foreach ($logEntries as $logEntry) {
 	// Navigate to the next or previous image using arrow keys
 	dialog.addEventListener('keydown', event => {
 		if (event.key === 'ArrowRight') {
+			dialogNext.classList.toggle("activated");
 			goToNextImage();
+			setTimeout(() => {
+				dialogNext.classList.toggle("activated");
+			  }, 125);
 		} else if (event.key === 'ArrowLeft') {
+			dialogPrevious.classList.toggle("activated");
 			goToPreviousImage();
+			setTimeout(() => {
+				dialogPrevious.classList.toggle("activated");
+			  }, 125);
 		}
 	});
 
@@ -300,6 +308,7 @@ foreach ($logEntries as $logEntry) {
 	function goToNextImage() {
 		currentIndex = (currentIndex + 1) % imageCards.length; // Wrap around to the start
 		openDialogWithCardData(imageCards[currentIndex]);
+
 	}
 	function goToPreviousImage() {
 		currentIndex = (currentIndex - 1 + imageCards.length) % imageCards.length; // Wrap around to the end

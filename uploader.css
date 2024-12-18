@@ -17,6 +17,7 @@ body {
 	--bg-light: hsl(0 0% 94%);
 	--fg-dark: hsl(0 0% 32%);
 	--white: #fff;
+	--black: #000;
 	--grey: hsl(30 0% 50%);
 	background: var(--bg-light);
 	color: var(--fg-dark);
@@ -226,6 +227,7 @@ main {
 	width: 100%;
 	height: auto;
 	max-height: 256px;
+	object-fit: contain;
 	border: var(--border1) var(--grey);
 }
 
@@ -256,6 +258,10 @@ dialog .controls{
 	justify-content: center;
 	gap: 2rem;
 }
+dialog .controls :where(.next-img, .previous-img){
+	border: 2px dashed transparent;
+	transition: all 0.125s;
+}
 dialog .controls img{
 	display: block;
 	width: 48px;
@@ -264,6 +270,10 @@ dialog .controls img{
 }
 dialog .controls .previous-img{
 	transform: rotate(180deg)
+}
+dialog .controls .activated{
+	border: 2px dashed var(--black);
+	border-radius: var(--borderRad);
 }
 .viewer-dialog {
 	padding:.25rem;
