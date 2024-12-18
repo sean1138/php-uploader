@@ -285,20 +285,34 @@ foreach ($logEntries as $logEntry) {
 		}
 	});
 
+	// next/prev activation highlighting funcs
+	function nextAct() {
+		dialogNext.classList.add("activated");
+	};
+	function nextDeAct() {
+		setTimeout(() => {
+			dialogNext.classList.remove("activated");
+		}, 125);
+	};
+	function prevAct() {
+		dialogPrevious.classList.add("activated");
+	};
+	function prevDeAct() {
+		setTimeout(() => {
+			dialogPrevious.classList.remove("activated");
+		}, 125);
+	};
+
 	// Navigate to the next or previous image using arrow keys
 	dialog.addEventListener('keydown', event => {
 		if (event.key === 'ArrowRight') {
-			dialogNext.classList.toggle("activated");
+			nextAct();
 			goToNextImage();
-			setTimeout(() => {
-				dialogNext.classList.toggle("activated");
-			  }, 125);
+			nextDeAct();
 		} else if (event.key === 'ArrowLeft') {
-			dialogPrevious.classList.toggle("activated");
+			prevAct();
 			goToPreviousImage();
-			setTimeout(() => {
-				dialogPrevious.classList.toggle("activated");
-			  }, 125);
+			prevDeAct();
 		}
 	});
 
@@ -306,13 +320,16 @@ foreach ($logEntries as $logEntry) {
 	dialogNext.addEventListener('click', goToNextImage);
 	dialogPrevious.addEventListener('click', goToPreviousImage);
 	function goToNextImage() {
+		nextAct();
 		currentIndex = (currentIndex + 1) % imageCards.length; // Wrap around to the start
 		openDialogWithCardData(imageCards[currentIndex]);
-
+		nextDeAct();
 	}
 	function goToPreviousImage() {
+		prevAct();
 		currentIndex = (currentIndex - 1 + imageCards.length) % imageCards.length; // Wrap around to the end
 		openDialogWithCardData(imageCards[currentIndex]);
+		prevDeAct();
 	}
 
 </script>
