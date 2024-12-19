@@ -98,7 +98,7 @@ header {
 	justify-content: end;
 }
 
-.logout-btn {
+.logout-btn, .btn {
 	padding: .5em 1em;
 	background-color: var(--color1light);
 	border: var(--border1) var(--color1);
@@ -108,9 +108,13 @@ header {
 	transition: all 0.5s;
 }
 
-.logout-btn:hover {
+.logout-btn:hover, .btn:not(.active):hover, .btn.active {
 	background: var(--color1);
 	color: var(--bg-light);
+}
+.btn.active{
+	cursor: text;
+	pointer-events: none;
 }
 
 main {
@@ -346,6 +350,16 @@ html:has(dialog[open]){
 	background-color: #0056b3;
 }
 
-.viewer-dialog .close-icon{
-
+.pagination{
+/*	display:flex;*/
+}
+.pagination ul{
+	margin: 0;
+	list-style: none;
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+}
+select{
+	font-size: 1rem;
 }

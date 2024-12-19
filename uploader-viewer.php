@@ -1,5 +1,5 @@
 <?php
-// log-viewer.php
+// uploader-viewer.php
 // use uploader-validate-multi-user.php or uploader-validate-single-user.php per your requirements
 require_once 'uploader-validate-multi-user-roles.php';
 require_once 'uploader-config.php';
@@ -20,6 +20,75 @@ $images = [];
 // Parse each JSON entry in the log file
 foreach ($logEntries as $logEntry) {
 	$images[] = json_decode($logEntry, true);
+}
+
+// Pagination variables
+$perPageOptions = [8, 16, 32, 64, 'all']; // Available per-page options
+$perPage = isset($_GET['per_page']) && in_array($_GET['per_page'], $perPageOptions) ? $_GET['per_page'] : 8;
+$currentPage = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+
+if ($perPage !== 'all') {
+	$perPage = intval($perPage); // Convert to an integer
+	$totalItems = count($images);
+	$totalPages = ceil($totalItems / $perPage);
+	$offset = ($currentPage - 1) * $perPage;
+	$paginatedFiles = array_slice($images, $offset, $perPage);
+} else {
+	$paginatedFiles = $images; // Show all items
+	$totalPages = 1;
+	$currentPage = 1;
+}
+
+// pagination function
+function renderPagination($currentPage, $totalPages, $perPage, $range = 1) {
+	if ($totalPages > 1): ?>
+		<div class="pagination">
+			<ul>
+				<?php
+				$start = max(1, $currentPage - $range);
+				$end = min($totalPages, $currentPage + $range);
+
+				// "Previous" link
+				if ($currentPage > 1): ?>
+					<li class="previous-page">
+						<a class="btn" href="?page=<?= $currentPage - 1 ?>&per_page=<?= $perPage ?>" class="prev">&laquo; Previous</a>
+					</li>
+				<?php endif; ?>
+
+				<!-- First page link if needed -->
+				<?php if ($start > 1): ?>
+					<li><a class="btn" href="?page=1&per_page=<?= $perPage ?>">1</a></li>
+					<?php if ($start > 2): ?>
+						<li class="ellipsis">...</li>
+					<?php endif; ?>
+				<?php endif; ?>
+
+				<!-- Display range of pages -->
+				<?php for ($i = $start; $i <= $end; $i++): ?>
+					<li>
+						<a class="btn <?= $i === $currentPage ? 'active' : '' ?>" href="?page=<?= $i ?>&per_page=<?= $perPage ?>">
+							<?= $i ?>
+						</a>
+					</li>
+				<?php endfor; ?>
+
+				<!-- Last page link if needed -->
+				<?php if ($end < $totalPages): ?>
+					<?php if ($end < $totalPages - 1): ?>
+						<li class="ellipsis">...</li>
+					<?php endif; ?>
+					<li><a class="btn" href="?page=<?= $totalPages ?>&per_page=<?= $perPage ?>"><?= $totalPages ?></a></li>
+				<?php endif; ?>
+
+				<!-- "Next" link -->
+				<?php if ($currentPage < $totalPages): ?>
+					<li class="next-page">
+						<a class="btn" href="?page=<?= $currentPage + 1 ?>&per_page=<?= $perPage ?>" class="next">Next &raquo;</a>
+					</li>
+				<?php endif; ?>
+			</ul>
+		</div>
+	<?php endif;
 }
 ?>
 
@@ -47,9 +116,24 @@ foreach ($logEntries as $logEntry) {
 	<a href="?logout" class="logout-btn">Logout</a>
 </header>
 <main>
+	<!-- Per-Page Selection -->
+	<div class="per-page-selector">
+		<form method="GET">
+			<label for="per_page">Items per page:</label>
+			<select name="per_page" id="per_page" onchange="this.form.submit()">
+				<?php foreach ($perPageOptions as $option): ?>
+					<option value="<?= $option ?>" <?= $option == $perPage ? 'selected' : '' ?>><?= $option ?></option>
+				<?php endforeach; ?>
+			</select>
+			<input type="hidden" name="page" value="1">
+		</form>
+	</div>
+	<!-- Pagination Controls -->
+	<?php renderPagination($currentPage, $totalPages, $perPage); ?>
+	<!-- Cards Container -->
 	<div class="cards-container">
-		<?php
-			foreach ($images as $file):
+		<!-- START for each file -->
+		<?php foreach ($paginatedFiles as $file):
 			$filename = htmlspecialchars($file['fileName']);
 			$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 			$fileUrl = $uploadUrl . $filename;
@@ -65,7 +149,6 @@ foreach ($logEntries as $logEntry) {
 				<p><strong>File Size:</strong> <span id="FileSize"><?= isset($file['fileSize']) ? htmlspecialchars($file['fileSize']) : 'N/A'; ?></span></p>
 				<p><strong>Dimensions:</strong> <span id="Dimensions"> <?= isset($file['fileDimensions']) ? htmlspecialchars($file['fileDimensions']) : 'N/A'; ?></span></p>
 				<p><strong>Upload Date:</strong> <span id="UploadDate"> <?= isset($file['uploadDate']) ? htmlspecialchars($file['uploadDate']) : 'Unknown'; ?></span></p>
-
 			</div>
 		</div>
 			<?php elseif ($extension === 'txt'): ?>
@@ -122,7 +205,11 @@ foreach ($logEntries as $logEntry) {
 				</div>
 			<?php endif; ?>
 		<?php endforeach; ?>
+		<!-- END for each file -->
 	</div>
+	<!-- end .cards-container -->
+	<!-- Pagination Controls -->
+	<?php renderPagination($currentPage, $totalPages, $perPage); ?>
 </main>
 <dialog id="viewerDialog" class="viewer-dialog">
 	<div class="controls">
