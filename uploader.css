@@ -103,8 +103,10 @@ header {
 	background-color: var(--color1light);
 	border: var(--border1) var(--color1);
 	border-radius: var(--borderRad);
+	font-size: 1rem;
 	text-decoration: none;
 	color: var(--color1);
+	cursor: pointer;
 	transition: all 0.5s;
 }
 
@@ -206,9 +208,11 @@ main {
 
 .cards-container {
 	display: flex;
-	justify-content: center;
 	flex-wrap: wrap;
 	gap: 1rem;
+}
+.cards-container.grid {
+	justify-content: center;
 }
 
 .cards-container :where(.image-card, .txt-card, .pdf-card, .video-card, .audio-card, .unsupported-card) {
@@ -235,6 +239,27 @@ main {
 	border: var(--border1) var(--grey);
 }
 
+.cards-container.list .image-card{
+	flex-direction: row;
+	width: 100%;
+	min-width: calc(50% - 2rem);
+	flex-direction: row;
+}
+.cards-container.list :where(img, video, audio, iframe, pre){
+	width: 25%;
+	max-width: 256px;
+	max-height: 128px;
+}
+.cards-container.list .audio-card{
+/*	flex-direction: column;*/
+	flex-wrap: wrap;
+}
+.cards-container.list audio{
+	flex: 1 0 100%;
+	width: revert;
+	min-width: 256px;
+}
+
 .cards-container audio{
 	height:revert;
 	border:none;
@@ -244,16 +269,19 @@ main {
 	margin: 0;
 	overflow: auto;
 }
-
+.card-info{
+	gap: .5em;
+	display: flex;
+	flex-direction: column;
+}
+.cards-container.list .card-info{
+	gap: 1em;
+}
 .card-info p{
 	margin: 0;
-	font-size: 14px;
-	word-wrap: wrap;
+	font-size: .875rem;
+	word-wrap: break-word;
 	overflow-wrap: break-word;
-}
-
-.card-info p  + p{
-	margin-top:.25em;
 }
 
 dialog .controls{
@@ -350,8 +378,10 @@ html:has(dialog[open]){
 	background-color: #0056b3;
 }
 
-.pagination{
-/*	display:flex;*/
+.controls{
+	display: flex;
+	gap: 1rem;
+	align-items: center;
 }
 .pagination ul{
 	margin: 0;

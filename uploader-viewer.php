@@ -117,21 +117,40 @@ function renderPagination($currentPage, $totalPages, $perPage, $range = 1) {
 </header>
 <main>
 	<!-- Per-Page Selection -->
-	<div class="per-page-selector">
-		<form method="GET">
-			<label for="per_page">Items per page:</label>
-			<select name="per_page" id="per_page" onchange="this.form.submit()">
-				<?php foreach ($perPageOptions as $option): ?>
-					<option value="<?= $option ?>" <?= $option == $perPage ? 'selected' : '' ?>><?= $option ?></option>
-				<?php endforeach; ?>
-			</select>
-			<input type="hidden" name="page" value="1">
-		</form>
+	<div class="controls">
+		<div class="per-page-selector">
+			<form method="GET">
+				<label for="per_page">Items per page:</label>
+				<select name="per_page" id="per_page" onchange="this.form.submit()">
+					<?php foreach ($perPageOptions as $option): ?>
+						<option value="<?= $option ?>" <?= $option == $perPage ? 'selected' : '' ?>><?= $option ?></option>
+					<?php endforeach; ?>
+				</select>
+				<input type="hidden" name="page" value="1">
+			</form>
+		</div>
+		<div class="layout-selector">
+			<button id="toggleView" class="btn">Switch to List View</button>
+			<script>
+				document.getElementById('toggleView').addEventListener('click', function() {
+					const target = document.querySelector('.cards-container');
+					if (target.classList.contains('grid')) {
+						target.classList.remove('grid');
+						target.classList.add('list');
+						this.textContent = 'Switch to Grid View';
+					} else {
+						target.classList.remove('list');
+						target.classList.add('grid');
+						this.textContent = 'Switch to List View';
+					}
+				});
+			</script>
+		</div>
 	</div>
 	<!-- Pagination Controls -->
 	<?php renderPagination($currentPage, $totalPages, $perPage); ?>
 	<!-- Cards Container -->
-	<div class="cards-container">
+	<div class="cards-container grid">
 		<!-- START for each file -->
 		<?php foreach ($paginatedFiles as $file):
 			$filename = htmlspecialchars($file['fileName']);
