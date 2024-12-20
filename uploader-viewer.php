@@ -132,17 +132,32 @@ function renderPagination($currentPage, $totalPages, $perPage, $range = 1) {
 		<div class="layout-selector">
 			<button id="toggleView" class="btn">Switch to List View</button>
 			<script>
-				document.getElementById('toggleView').addEventListener('click', function() {
+				document.addEventListener('DOMContentLoaded', function() {
 					const target = document.querySelector('.cards-container');
-					if (target.classList.contains('grid')) {
-						target.classList.remove('grid');
-						target.classList.add('list');
-						this.textContent = 'Switch to Grid View';
-					} else {
-						target.classList.remove('list');
-						target.classList.add('grid');
-						this.textContent = 'Switch to List View';
+					const button = document.getElementById('toggleView');
+
+					// Load the saved preference from localStorage
+					const savedView = localStorage.getItem('viewMode');
+					if (savedView) {
+						target.classList.remove('grid', 'list');
+						target.classList.add(savedView);
+						button.textContent = savedView === 'grid' ? 'Switch to List' : 'Switch to Grid';
 					}
+
+					// Add event listener to the button
+					button.addEventListener('click', function() {
+						if (target.classList.contains('grid')) {
+							target.classList.remove('grid');
+							target.classList.add('list');
+							this.textContent = 'Switch to Grid';
+							localStorage.setItem('viewMode', 'list'); // Save to localStorage
+						} else {
+							target.classList.remove('list');
+							target.classList.add('grid');
+							this.textContent = 'Switch to List';
+							localStorage.setItem('viewMode', 'grid'); // Save to localStorage
+						}
+					});
 				});
 			</script>
 		</div>
