@@ -133,18 +133,26 @@ require_once 'uploader-validate-multi-user-roles.php';
 			        previewElement.alt = fileName;
 			        previewElement.className = 'preview';
 			    } else if (videoExtensions.includes(fileExtension)) {
-			        previewElement = document.createElement('video');
-			        previewElement.src = fullUrl;
-			        previewElement.controls = true;
-			        previewElement.className = 'preview';
+			        // previewElement = document.createElement('video');
+			        // previewElement.src = fullUrl;
+			        // previewElement.controls = true;
+			        // previewElement.className = 'preview';
+			    	// let's not embed video for now
+			    	previewElement = document.createElement('p');
+			    	previewElement.className = 'file-placeholder';
+			    	previewElement.textContent = `Preview not available for ${fileExtension} files.`;
 			    } else if (audioExtensions.includes(fileExtension)) {
-			        previewElement = document.createElement('audio');
-			        previewElement.src = fullUrl;
-			        previewElement.controls = true;
-			        previewElement.className = 'preview';
+			        // previewElement = document.createElement('audio');
+			        // previewElement.src = fullUrl;
+			        // previewElement.controls = true;
+			        // previewElement.className = 'preview';
+				    	// let's not embed audio for now
+				    	previewElement = document.createElement('p');
+				    	previewElement.className = 'file-placeholder';
+				    	previewElement.textContent = `Preview not available for ${fileExtension} files.`;
 			    } else {
 			        // For unsupported file types, create a generic icon or placeholder
-			        previewElement = document.createElement('div');
+			        previewElement = document.createElement('p');
 			        previewElement.className = 'file-placeholder';
 			        previewElement.textContent = `Preview not available for ${fileExtension} files.`;
 			    }
@@ -219,8 +227,12 @@ require_once 'uploader-validate-multi-user-roles.php';
 			    }
 
 					fileName.textContent = `Error: ${response.error}`;
+					// remove fileName <P class="uploading">
+					fileCard.removeChild(fileName);
 					progressBar.style.backgroundColor = 'red';
 					uploadZone.classList.remove('highlight');
+					// remove progress bar
+					fileCard.removeChild(progressBar);
 
 					if (response.existingFileUrl) {
 						uploadZone.classList.remove('highlight');

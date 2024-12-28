@@ -167,10 +167,6 @@ main {
 	border-radius: var(--borderRad);
 }
 
-.fileCard span {
-	margin-left: 1em;
-}
-
 .progress {
 	height: .25rem;
 	background-color: #00aaff;
@@ -182,6 +178,11 @@ main {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	gap: 1rem;
+}
+
+.results a{
+	overflow-wrap: anywhere;
 }
 
 .copy-link {
@@ -196,6 +197,8 @@ main {
 	height: auto;
 	max-height: 80px;
 	border: var(--border1) var(--grey);
+	/* setting any overflow value makes img not flow outside of container */
+	overflow: auto;
 }
 
 .settings {
