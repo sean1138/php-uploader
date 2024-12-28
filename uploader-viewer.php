@@ -117,7 +117,7 @@ function renderPagination($currentPage, $totalPages, $perPage, $range = 1) {
 </header>
 <main>
 	<!-- Per-Page Selection -->
-	<div class="controls">
+	<div class="page controls">
 		<div class="per-page-selector">
 			<form method="GET">
 				<label for="per_page">Items per page:</label>

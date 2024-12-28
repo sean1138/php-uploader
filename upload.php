@@ -168,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				}
 
 				// Respond with duplicate file info
-				http_response_code(400);
+				http_response_code(409);
 				echo json_encode([
 					'error' => 'Duplicate file detected',
 					'existingFileUrl' => $existingFileUrl,

@@ -113,6 +113,46 @@ require_once 'uploader-validate-multi-user-roles.php';
 				}
 			});
 
+			// function for creating img previews or not
+			function createFilePreview(fullUrl, fileName) {
+			    // Define a list of allowed image extensions
+			    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
+			    const videoExtensions = ['mp4', 'webm', 'mov', 'mpeg'];
+			    const audioExtensions = ['mp3', 'wav'];
+
+			    // Extract the file extension from the fileName
+			    const fileExtension = fileName.split('.').pop().toLowerCase();
+
+			    // Create a container element for the preview
+			    let previewElement;
+
+			    // Check file type and create appropriate preview element
+			    if (imageExtensions.includes(fileExtension)) {
+			        previewElement = document.createElement('img');
+			        previewElement.src = fullUrl;
+			        previewElement.alt = fileName;
+			        previewElement.className = 'preview';
+			    } else if (videoExtensions.includes(fileExtension)) {
+			        previewElement = document.createElement('video');
+			        previewElement.src = fullUrl;
+			        previewElement.controls = true;
+			        previewElement.className = 'preview';
+			    } else if (audioExtensions.includes(fileExtension)) {
+			        previewElement = document.createElement('audio');
+			        previewElement.src = fullUrl;
+			        previewElement.controls = true;
+			        previewElement.className = 'preview';
+			    } else {
+			        // For unsupported file types, create a generic icon or placeholder
+			        previewElement = document.createElement('div');
+			        previewElement.className = 'file-placeholder';
+			        previewElement.textContent = `Preview not available for ${fileExtension} files.`;
+			    }
+
+			    return previewElement;
+			}
+
+
 			xhr.onload = () => {
 				if (xhr.status === 200) {
 					const response = JSON.parse(xhr.responseText);
@@ -145,24 +185,38 @@ require_once 'uploader-validate-multi-user-roles.php';
 					fileSize.className = 'file-size';
 
 					const fileDims = document.createElement('span');
-					fileDims.textContent = `File Dimensions: ${response.fileDimensions}`;
+					fileDims.textContent = `File Dimensions: ${response.fileDimensions || 'N/A'}`;
 					fileDims.className = 'file-dims';
-
-					const fileEmbed = document.createElement('img');
-					fileEmbed.src = fullUrl;
-					fileEmbed.alt = response.fileName;
-					fileEmbed.className = 'preview';
 
 					fileLink.appendChild(link);
 					fileLink.appendChild(copyLink);
 					fileLink.appendChild(fileSize);
 					fileLink.appendChild(fileDims);
-					fileLink.appendChild(fileEmbed);
+					// fileLink.appendChild(fileEmbed);
+
+					const previewElement = createFilePreview(fullUrl, response.fileName);
+					fileLink.appendChild(previewElement);
 
 					fileCard.appendChild(fileLink);
 				} else {
 					// duplicate file detected
 					const response = JSON.parse(xhr.responseText);
+
+					// friendlier console error on duplicate detected
+					if (xhr.status === 200) {
+			        // Handle success
+			        const fileEmbed = createFilePreview(fullUrl, response.fileName);
+			        // Add other logic for successful upload
+			    } else if (xhr.status === 409) { // Handle duplicate file
+			        console.error('Duplicate file detected:', response.error);
+			        const duplicateMessage = document.createElement('p');
+			        duplicateMessage.textContent = `Duplicate file detected. Existing file: ${response.existingFileUrl}`;
+			        duplicateMessage.style.color = 'red';
+			        fileCard.appendChild(duplicateMessage);
+			    } else {
+			        // Handle other errors
+			        console.error('An error occurred:', response.error);
+			    }
 
 					fileName.textContent = `Error: ${response.error}`;
 					progressBar.style.backgroundColor = 'red';
@@ -193,19 +247,17 @@ require_once 'uploader-validate-multi-user-roles.php';
 						fileSize.className = 'file-size';
 
 						const fileDims = document.createElement('span');
-						fileDims.textContent = `File Dimensions: ${response.fileDimensions}`;
+						fileDims.textContent = `File Dimensions: ${response.fileDimensions || 'N/A'}`;
 						fileDims.className = 'file-dims';
-
-						const fileEmbed = document.createElement('img');
-						fileEmbed.src = fullUrl;
-						fileEmbed.alt = fileName;
-						fileEmbed.className = 'preview';
 
 						fileLink.appendChild(link);
 						fileLink.appendChild(copyLink);
 						fileLink.appendChild(fileSize);
 						fileLink.appendChild(fileDims);
-						fileLink.appendChild(fileEmbed);
+						// fileLink.appendChild(fileEmbed);
+
+						const previewElement = createFilePreview(fullUrl, fileName);
+						fileLink.appendChild(previewElement);
 
 						fileCard.appendChild(fileLink);
 					}

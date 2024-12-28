@@ -206,6 +206,22 @@ main {
 	display: none;
 }
 
+/* start viewer page */
+.page.controls{
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+}
+.pagination ul{
+	margin: 0;
+	list-style: none;
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+}
+select{
+	font-size: 1rem;
+}
 .cards-container {
 	display: flex;
 	flex-wrap: wrap;
@@ -235,6 +251,7 @@ main {
 	width: 100%;
 	height: auto;
 	max-height: 256px;
+	max-height: 160px;
 	object-fit: contain;
 	border: var(--border1) var(--grey);
 }
@@ -376,20 +393,4 @@ html:has(dialog[open]){
 
 .viewer-dialog .close-btn:hover {
 	background-color: #0056b3;
-}
-
-.controls{
-	display: flex;
-	gap: 1rem;
-	align-items: center;
-}
-.pagination ul{
-	margin: 0;
-	list-style: none;
-	display: flex;
-	gap: 1rem;
-	justify-content: center;
-}
-select{
-	font-size: 1rem;
 }
