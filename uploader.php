@@ -125,6 +125,9 @@ require_once 'uploader-validate-multi-user-roles.php';
 
 			    // Create a container element for the preview
 			    let previewElement;
+			    // thinking here...
+			    // const elements = document.getElementsByClassName("file-dims");
+			    // const element = document.querySelector('.my-element');
 
 			    // Check file type and create appropriate preview element
 			    if (imageExtensions.includes(fileExtension)) {
@@ -132,15 +135,16 @@ require_once 'uploader-validate-multi-user-roles.php';
 			        previewElement.src = fullUrl;
 			        previewElement.alt = fileName;
 			        previewElement.className = 'preview';
+			        fileCard.classList.add('type-image');
 			    } else if (videoExtensions.includes(fileExtension)) {
 			        // previewElement = document.createElement('video');
 			        // previewElement.src = fullUrl;
 			        // previewElement.controls = true;
 			        // previewElement.className = 'preview';
-			    	// let's not embed video for now
-			    	previewElement = document.createElement('p');
-			    	previewElement.className = 'file-placeholder';
-			    	previewElement.textContent = `Preview not available for ${fileExtension} files.`;
+				    	// let's not embed video for now
+				    	previewElement = document.createElement('p');
+				    	previewElement.className = 'file-placeholder';
+				    	previewElement.textContent = `Preview not available for ${fileExtension} files.`;
 			    } else if (audioExtensions.includes(fileExtension)) {
 			        // previewElement = document.createElement('audio');
 			        // previewElement.src = fullUrl;
@@ -150,16 +154,16 @@ require_once 'uploader-validate-multi-user-roles.php';
 				    	previewElement = document.createElement('p');
 				    	previewElement.className = 'file-placeholder';
 				    	previewElement.textContent = `Preview not available for ${fileExtension} files.`;
+				    	fileCard.classList.add('type-audio');
 			    } else {
 			        // For unsupported file types, create a generic icon or placeholder
 			        previewElement = document.createElement('p');
 			        previewElement.className = 'file-placeholder';
 			        previewElement.textContent = `Preview not available for ${fileExtension} files.`;
+			        fileCard.classList.add('type-unsupported');
 			    }
-
 			    return previewElement;
 			}
-
 
 			xhr.onload = () => {
 				if (xhr.status === 200) {
@@ -189,11 +193,11 @@ require_once 'uploader-validate-multi-user-roles.php';
 					copyLink.onclick = () => navigator.clipboard.writeText(fullUrl);
 
 					const fileSize = document.createElement('span');
-					fileSize.textContent = `File Size: ${response.fileSize}`;
+					fileSize.textContent = `${response.fileSize}`;
 					fileSize.className = 'file-size';
 
 					const fileDims = document.createElement('span');
-					fileDims.textContent = `File Dimensions: ${response.fileDimensions || 'N/A'}`;
+					fileDims.textContent = `Dimensions: ${response.fileDimensions || 'N/A'}`;
 					fileDims.className = 'file-dims';
 
 					fileLink.appendChild(link);
@@ -255,11 +259,11 @@ require_once 'uploader-validate-multi-user-roles.php';
 						copyLink.onclick = () => navigator.clipboard.writeText(fullUrl);
 
 						const fileSize = document.createElement('span');
-						fileSize.textContent = `File Size: ${response.fileSize}`;
+						fileSize.textContent = `${response.fileSize}`;
 						fileSize.className = 'file-size';
 
 						const fileDims = document.createElement('span');
-						fileDims.textContent = `File Dimensions: ${response.fileDimensions || 'N/A'}`;
+						fileDims.textContent = `Dimensions: ${response.fileDimensions || 'N/A'}`;
 						fileDims.className = 'file-dims';
 
 						fileLink.appendChild(link);
