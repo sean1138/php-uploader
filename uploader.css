@@ -183,6 +183,19 @@ main {
 
 .results a{
 	overflow-wrap: anywhere;
+	order: 1;
+}
+.results .copy-link{
+	order: 2;
+}
+.results .file-size{
+	order: 3;
+}
+.results .file-dims{
+	order: 4;
+}
+.results .preview{
+	order: 5;
 }
 
 .copy-link {
@@ -191,8 +204,7 @@ main {
 	text-decoration: underline;
 }
 
-.preview {
-	margin-left: 1em;
+img.preview {
 	width: auto;
 	height: auto;
 	max-height: 80px;

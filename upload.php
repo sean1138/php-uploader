@@ -119,10 +119,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	// Validate file type
 	if (!in_array($file['type'], $allowedFileTypes)) {
-		http_response_code(400);
-		echo json_encode(['error' => 'Invalid file type.']);
-		exit;
-	}
+		// Respond with an unsupported file type message
+    http_response_code(415); // 415 Unsupported Media Type
+    echo json_encode([
+        'error' => 'Unsupported file type',
+        'fileName' => $_FILES['file']['name']
+    ]);
+    exit;
+}
 
 	// Preserve original filename for regular uploads
 	$extension = pathinfo($file['name'], PATHINFO_EXTENSION);
@@ -173,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					'error' => 'Duplicate file detected',
 					'existingFileUrl' => $existingFileUrl,
 					'fileSize' => "{$fileSizeKb} KB",
-					'fileDimensions' => $dimensions ?: 'N/A'
+					'fileDimensions' => $dimensions ?: null
 				]);
 				exit;
 			}

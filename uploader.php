@@ -115,54 +115,54 @@ require_once 'uploader-validate-multi-user-roles.php';
 
 			// function for creating img previews or not
 			function createFilePreview(fullUrl, fileName) {
-			    // Define a list of allowed image extensions
-			    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
-			    const videoExtensions = ['mp4', 'webm', 'mov', 'mpeg'];
-			    const audioExtensions = ['mp3', 'wav'];
+					// Define a list of allowed image extensions
+					const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
+					const videoExtensions = ['mp4', 'webm', 'mov', 'mpeg'];
+					const audioExtensions = ['mp3', 'wav'];
 
-			    // Extract the file extension from the fileName
-			    const fileExtension = fileName.split('.').pop().toLowerCase();
+					// Extract the file extension from the fileName
+					const fileExtension = fileName.split('.').pop().toLowerCase();
 
-			    // Create a container element for the preview
-			    let previewElement;
-			    // thinking here...
-			    // const elements = document.getElementsByClassName("file-dims");
-			    // const element = document.querySelector('.my-element');
+					// Create a container element for the preview
+					let previewElement;
+					// thinking here...
+					// const elements = document.getElementsByClassName("file-dims");
+					// const element = document.querySelector('.my-element');
 
-			    // Check file type and create appropriate preview element
-			    if (imageExtensions.includes(fileExtension)) {
-			        previewElement = document.createElement('img');
-			        previewElement.src = fullUrl;
-			        previewElement.alt = fileName;
-			        previewElement.className = 'preview';
-			        fileCard.classList.add('type-image');
-			    } else if (videoExtensions.includes(fileExtension)) {
-			        // previewElement = document.createElement('video');
-			        // previewElement.src = fullUrl;
-			        // previewElement.controls = true;
-			        // previewElement.className = 'preview';
-				    	// let's not embed video for now
-				    	previewElement = document.createElement('p');
-				    	previewElement.className = 'file-placeholder';
-				    	previewElement.textContent = `Preview not available for ${fileExtension} files.`;
-			    } else if (audioExtensions.includes(fileExtension)) {
-			        // previewElement = document.createElement('audio');
-			        // previewElement.src = fullUrl;
-			        // previewElement.controls = true;
-			        // previewElement.className = 'preview';
-				    	// let's not embed audio for now
-				    	previewElement = document.createElement('p');
-				    	previewElement.className = 'file-placeholder';
-				    	previewElement.textContent = `Preview not available for ${fileExtension} files.`;
-				    	fileCard.classList.add('type-audio');
-			    } else {
-			        // For unsupported file types, create a generic icon or placeholder
-			        previewElement = document.createElement('p');
-			        previewElement.className = 'file-placeholder';
-			        previewElement.textContent = `Preview not available for ${fileExtension} files.`;
-			        fileCard.classList.add('type-unsupported');
-			    }
-			    return previewElement;
+					// Check file type and create appropriate preview element
+					if (imageExtensions.includes(fileExtension)) {
+							previewElement = document.createElement('img');
+							previewElement.src = fullUrl;
+							previewElement.alt = fileName;
+							previewElement.className = 'preview';
+							fileCard.classList.add('type-image');
+					} else if (videoExtensions.includes(fileExtension)) {
+							// previewElement = document.createElement('video');
+							// previewElement.src = fullUrl;
+							// previewElement.controls = true;
+							// previewElement.className = 'preview';
+							// let's not embed video for now
+							previewElement = document.createElement('p');
+							previewElement.className = 'preview';
+							previewElement.textContent = `Preview not available for ${fileExtension} files.`;
+					} else if (audioExtensions.includes(fileExtension)) {
+							// previewElement = document.createElement('audio');
+							// previewElement.src = fullUrl;
+							// previewElement.controls = true;
+							// previewElement.className = 'preview';
+							// let's not embed audio for now
+							previewElement = document.createElement('p');
+							previewElement.className = 'preview';
+							previewElement.textContent = `Preview not available for ${fileExtension} files.`;
+							fileCard.classList.add('type-audio');
+					} else {
+							// For unsupported file types, create a generic icon or placeholder
+							previewElement = document.createElement('p');
+							previewElement.className = 'preview';
+							previewElement.textContent = `Preview not available for ${fileExtension} files.`;
+							fileCard.classList.add('type-unsupported');
+					}
+					return previewElement;
 			}
 
 			xhr.onload = () => {
@@ -196,14 +196,18 @@ require_once 'uploader-validate-multi-user-roles.php';
 					fileSize.textContent = `${response.fileSize}`;
 					fileSize.className = 'file-size';
 
-					const fileDims = document.createElement('span');
-					fileDims.textContent = `Dimensions: ${response.fileDimensions || 'N/A'}`;
-					fileDims.className = 'file-dims';
+					// Only create the element if dimensions exist
+					if (response.fileDimensions !== null && response.fileDimensions !== undefined) {
+							const fileDims = document.createElement('span');
+							fileDims.textContent = `Dimensions: ${response.fileDimensions}`;
+							fileDims.className = 'file-dims';
+							fileLink.appendChild(fileDims);
+					}
 
 					fileLink.appendChild(link);
 					fileLink.appendChild(copyLink);
 					fileLink.appendChild(fileSize);
-					fileLink.appendChild(fileDims);
+					// fileLink.appendChild(fileDims);
 					// fileLink.appendChild(fileEmbed);
 
 					const previewElement = createFilePreview(fullUrl, response.fileName);
@@ -216,19 +220,27 @@ require_once 'uploader-validate-multi-user-roles.php';
 
 					// friendlier console error on duplicate detected
 					if (xhr.status === 200) {
-			        // Handle success
-			        const fileEmbed = createFilePreview(fullUrl, response.fileName);
-			        // Add other logic for successful upload
-			    } else if (xhr.status === 409) { // Handle duplicate file
-			        console.error('Duplicate file detected:', response.error);
-			        const duplicateMessage = document.createElement('p');
-			        duplicateMessage.textContent = `Duplicate file detected. Existing file: ${response.existingFileUrl}`;
-			        duplicateMessage.style.color = 'red';
-			        fileCard.appendChild(duplicateMessage);
-			    } else {
-			        // Handle other errors
-			        console.error('An error occurred:', response.error);
-			    }
+							// Handle success
+							const fileEmbed = createFilePreview(fullUrl, response.fileName);
+							// Add other logic for successful upload
+					} else if (xhr.status === 409) { // Handle duplicate file
+							console.error('Duplicate file detected:', response.error);
+							const duplicateMessage = document.createElement('p');
+							duplicateMessage.textContent = `Duplicate file detected. Existing file: ${response.existingFileUrl}`;
+							duplicateMessage.style.color = 'red';
+							fileCard.appendChild(duplicateMessage);
+					} else if (xhr.status === 415) { // Check for 415 Unsupported Media Type
+						const response = JSON.parse(xhr.responseText);
+						if (response.fileName) { // Only add the card if we have an error message to show
+							const unsupportedMessage = document.createElement('p');
+							unsupportedMessage.textContent = `Unsupported file type: ${response.fileName}`;
+							unsupportedMessage.className = 'unsupported-message';
+							fileCard.appendChild(unsupportedMessage);
+						}
+					} else {
+							// Handle other errors
+							console.error('An unexpected error occurred:', response.error);
+					}
 
 					fileName.textContent = `Error: ${response.error}`;
 					// remove fileName <P class="uploading">
@@ -262,14 +274,18 @@ require_once 'uploader-validate-multi-user-roles.php';
 						fileSize.textContent = `${response.fileSize}`;
 						fileSize.className = 'file-size';
 
-						const fileDims = document.createElement('span');
-						fileDims.textContent = `Dimensions: ${response.fileDimensions || 'N/A'}`;
-						fileDims.className = 'file-dims';
+						// Only create the element if dimensions exist
+						if (response.fileDimensions !== null && response.fileDimensions !== undefined) {
+								const fileDims = document.createElement('span');
+								fileDims.textContent = `Dimensions: ${response.fileDimensions}`;
+								fileDims.className = 'file-dims';
+								fileLink.appendChild(fileDims);
+						}
 
 						fileLink.appendChild(link);
 						fileLink.appendChild(copyLink);
 						fileLink.appendChild(fileSize);
-						fileLink.appendChild(fileDims);
+						// fileLink.appendChild(fileDims);
 						// fileLink.appendChild(fileEmbed);
 
 						const previewElement = createFilePreview(fullUrl, fileName);
