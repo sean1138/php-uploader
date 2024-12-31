@@ -7,7 +7,7 @@ require_once 'uploader-validate-multi-user-roles.php';
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" type="image/png" href="uploader-svgrepo-com-upload.svg">
+	<link rel="icon" type="image/svg+xml" href="uploader-svgrepo-com-upload.svg">
 	<link rel="stylesheet" href="uploader.css">
 	<title>File Uploader</title>
 </head>
