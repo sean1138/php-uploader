@@ -22,6 +22,21 @@ foreach ($logEntries as $logEntry) {
 	$images[] = json_decode($logEntry, true);
 }
 
+// Sort files by upload timestamp (newest first)
+usort($images, function ($a, $b) {
+	return strtotime($b['uploadDate']) - strtotime($a['uploadDate']);
+});
+// Determine sorting order from query parameter
+$sortOrder = isset($_GET['sort']) && $_GET['sort'] === 'oldest' ? 'oldest' : 'newest';
+
+usort($images, function ($a, $b) use ($sortOrder) {
+	return $sortOrder === 'newest'
+		? strtotime($b['uploadDate']) - strtotime($a['uploadDate'])
+		: strtotime($a['uploadDate']) - strtotime($b['uploadDate']);
+});
+
+
+
 // Pagination variables
 $perPageOptions = [8, 16, 32, 64, 'all']; // Available per-page options
 $perPage = isset($_GET['per_page']) && in_array($_GET['per_page'], $perPageOptions) ? $_GET['per_page'] : 8;
@@ -118,6 +133,21 @@ function renderPagination($currentPage, $totalPages, $perPage, $range = 1) {
 <main>
 	<!-- Per-Page Selection -->
 	<div class="page controls">
+		<div class="sorting">
+			<label for="sortSelect">Sort by:</label>
+			<select id="sortSelect">
+				<option value="newest" <?= $sortOrder === 'newest' ? 'selected' : '' ?>>Newest First</option>
+				<option value="oldest" <?= $sortOrder === 'oldest' ? 'selected' : '' ?>>Oldest First</option>
+			</select>
+		</div>
+		<script class="sorting">
+		document.getElementById('sortSelect').addEventListener('change', function() {
+		    const selectedSort = this.value;
+		    const url = new URL(window.location.href);
+		    url.searchParams.set('sort', selectedSort);
+		    window.location.href = url.toString();
+		});
+		</script>
 		<div class="per-page-selector">
 			<form method="GET">
 				<label for="per_page">Items per page:</label>
