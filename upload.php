@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				'uploaderIP' => $_SERVER['REMOTE_ADDR'],
 				'expiry' => $expiry,
 			];
-			file_put_contents(__DIR__ . $uploadDir . 'log.json', json_encode($logEntry) . PHP_EOL, FILE_APPEND);
+			file_put_contents($uploadDir . 'log.json', json_encode($logEntry) . PHP_EOL, FILE_APPEND);
 			debugLog("Log entry written.");
 
 			// Respond to the frontend
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				'fileName' => $uniqueName,
 				'fileSize' => round($fileSize / 1024, 2) . ' KB',
 				'fileDimensions' => $dimensions,
-				'fileUrl' => 'uploads/' . $uniqueName,
+				'fileUrl' => basename($uploadDir) . '/' . $uniqueName,
 			]);
 			debugLog("Response sent to frontend.");
 			exit;
@@ -158,7 +158,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				// If a duplicate is detected, return the file details
 
 				$existingFileName = basename($existingFile); // Extract the filename
-				$existingFileUrl = 'uploads/' . $existingFileName; // Create the URL
+				// $existingFileUrl = 'uploads/' . $existingFileName; // Create the URL
+				$existingFileUrl = basename($uploadDir) . '/' . $existingFileName; // Create the URL
 
 				// Get file size
 				$fileSize = filesize($existingFile); // Size in bytes
@@ -219,14 +220,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		'uploaderIP' => $_SERVER['REMOTE_ADDR'],
 		'expiry' => $expiryTimestamp ? date('Y-m-d H:i:s', $expiryTimestamp) : 'Never',
 	];
-	file_put_contents(__DIR__ . '/uploads/log.json', json_encode($logEntry) . PHP_EOL, FILE_APPEND);
+	file_put_contents($uploadDir . 'log.json', json_encode($logEntry) . PHP_EOL, FILE_APPEND);
 
 	// Respond to client
 	echo json_encode([
 		'fileName' => $uniqueName,
 		'fileSize' => round($file['size'] / 1024, 2) . ' KB',
 		'fileDimensions' => $dimensions,
-		'fileUrl' => 'uploads/' . $uniqueName,
+		'fileUrl' => basename($uploadDir) . '/' . $uniqueName,
 	]);
 }
 ?>
